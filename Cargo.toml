@@ -1,9 +1,16 @@
 [package]
-name = "deno-notifs"
+name = "deno_notifs"
 version = "0.1.0"
 authors = ["Pandawan <pandawanfr@gmail.com>"]
 edition = "2018"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
+futures = "0.3.5"
+deno_core = "0.45.2"
+
