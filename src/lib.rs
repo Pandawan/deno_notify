@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 
 #[no_mangle]
 pub fn deno_plugin_init(interface: &mut dyn Interface) {
-  interface.register_op("notifs_new", op_notifs_new);
+  interface.register_op("notifs_send", op_notifs_send);
 }
 
 #[derive(Serialize)]
@@ -17,28 +17,28 @@ struct NotifsResponse<T> {
 }
 
 #[derive(Deserialize)]
-struct NewNotificationParams {
+struct SendNotificationParams {
     title: String,
     message: String,
     icon: Option<String>
 }
 
 #[derive(Serialize)]
-struct NewNotificationResult {
+struct SendNotificationResult {
 }
 
 
-fn op_notifs_new(
+fn op_notifs_send(
   _interface: &mut dyn Interface,
   data: &[u8],
   _zero_copy: Option<ZeroCopyBuf>,
 ) -> Op {
-  let mut response: NotifsResponse<NewNotificationResult> = NotifsResponse {
+  let mut response: NotifsResponse<SendNotificationResult> = NotifsResponse {
       err: None,
       ok: None,
   };
 
-  let params: NewNotificationParams = serde_json::from_slice(data).unwrap();
+  let params: SendNotificationParams = serde_json::from_slice(data).unwrap();
 
   match Notification::new()
       .summary(&params.title)
@@ -49,7 +49,7 @@ fn op_notifs_new(
       })
       .show() {
         Ok(_) => {
-          response.ok = Some(NewNotificationResult {});
+          response.ok = Some(SendNotificationResult {});
         },
         Err(error) => {
           response.err = Some(error.to_string());

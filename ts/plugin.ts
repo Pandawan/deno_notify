@@ -1,8 +1,13 @@
 import { prepare } from "./deps.ts";
+import { resolve } from "https://deno.land/std@v0.50.0/path/mod.ts";
 
-export const PLUGIN_URL_BASE = Deno.env.get("DENO_NOTIFS_PLUGIN_BASE") ||
-  "https://github.com/PandawanFr/deno_notifs/releases/download/0.1.0";
-const PLUGIN_URL = Deno.env.get("DENO_NOTIFS_PLUGIN");
+let DENO_NOTIFS_PLUGIN_BASE = Deno.env.get("DENO_NOTIFS_PLUGIN_BASE");
+export const PLUGIN_URL_BASE = DENO_NOTIFS_PLUGIN_BASE
+  ? resolvePathToURL(DENO_NOTIFS_PLUGIN_BASE)
+  : "https://github.com/PandawanFr/deno_notifs/releases/download/0.1.0";
+
+let DENO_NOTIFS_PLUGIN = Deno.env.get("DENO_NOTIFS_PLUGIN");
+const PLUGIN_URL = DENO_NOTIFS_PLUGIN ? resolvePathToURL(DENO_NOTIFS_PLUGIN) : undefined;
 const DEBUG = Boolean(Deno.env.get("DENO_NOTIFS_DEBUG"));
 
 let pluginId: number | null = null;
@@ -20,6 +25,15 @@ const core = Deno.core as {
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
+
+function resolvePathToURL(path: string) {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  } else {
+    let resolvedPath = resolve(path);
+    return "file://" + resolvedPath;
+  }
+}
 
 function decode(data: Uint8Array): object {
   const text = decoder.decode(data);
@@ -41,7 +55,10 @@ function getOpId(op: string): number {
   return id;
 }
 
-function opSync<R extends NotifsResponse<any>>(op: string, data: object): R {
+export function opSync<R extends NotifsResponse<any>>(
+  op: string,
+  data: object,
+): R {
   if (pluginId === null) {
     throw "The plugin must be initialized before use";
   }
@@ -52,7 +69,7 @@ function opSync<R extends NotifsResponse<any>>(op: string, data: object): R {
   return decode(response) as R;
 }
 
-function unwrapResponse<T, R extends NotifsResponse<T>>(response: R): T {
+export function unwrapResponse<T, R extends NotifsResponse<T>>(response: R): T {
   if (response.err) {
     throw response.err;
   }
@@ -92,19 +109,6 @@ export function unload(): void {
 export interface NotifsResponse<T> {
   err?: string;
   ok?: T;
-}
-
-export interface NewNotificationParams {
-    title: string;
-    message: string;
-    icon?: string;
-}
-
-export interface NewNotificationResult {
-}
-
-export function NewNotification(params: NewNotificationParams): NewNotificationResult {
-  return unwrapResponse(opSync("notifs_new", params));
 }
 
 await load(!DEBUG, DEBUG);

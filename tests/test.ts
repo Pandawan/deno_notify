@@ -1,7 +1,12 @@
-// Run test with DENO_NOTIFS_PLUGIN_BASE=file:///path/to/target/debug deno run --unstable --allow-plugin --allow-all test.ts
-import { notify } from '../ts/mod.ts';
+// Run test with DENO_NOTIFS_PLUGIN_BASE=./target/debug/ DENO_NOTIFS_DEBUG=true deno test --unstable --allow-plugin --allow-all tests/test.ts
+import { sendNotification } from '../ts/mod.ts';
 
-notify({
-  title: 'Hey',
-  message: 'Hello World'
+Deno.test({
+  name: 'Send Notification',
+  fn(): void {
+    sendNotification({
+      title: 'Hey',
+      message: 'Hello World'
+    });
+  }
 });
