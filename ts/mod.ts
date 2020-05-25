@@ -1,0 +1,1 @@
+export { NewNotification as notify } from './plugin.ts';

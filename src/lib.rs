@@ -2,56 +2,61 @@ use deno_core::plugin_api::Buf;
 use deno_core::plugin_api::Interface;
 use deno_core::plugin_api::Op;
 use deno_core::plugin_api::ZeroCopyBuf;
-use futures::future::FutureExt;
+use notify_rust::Notification;
+use serde::{Serialize, Deserialize};
 
 #[no_mangle]
 pub fn deno_plugin_init(interface: &mut dyn Interface) {
-  interface.register_op("testSync", op_test_sync);
-  interface.register_op("testAsync", op_test_async);
+  interface.register_op("notifs_new", op_notifs_new);
 }
 
-fn op_test_sync(
-  _interface: &mut dyn Interface,
-  data: &[u8],
-  zero_copy: Option<ZeroCopyBuf>,
-) -> Op {
-  if let Some(buf) = zero_copy {
-    let data_str = std::str::from_utf8(&data[..]).unwrap();
-    let buf_str = std::str::from_utf8(&buf[..]).unwrap();
-    println!(
-      "Hello from plugin. data: {} | zero_copy: {}",
-      data_str, buf_str
-    );
-  }
-  let result = b"test";
-  let result_box: Buf = Box::new(*result);
-  Op::Sync(result_box)
+#[derive(Serialize)]
+struct NotifsResponse<T> {
+    err: Option<String>,
+    ok: Option<T>,
 }
 
-fn op_test_async(
+#[derive(Deserialize)]
+struct NewNotificationParams {
+    title: String,
+    message: String,
+    icon: Option<String>
+}
+
+#[derive(Serialize)]
+struct NewNotificationResult {
+}
+
+
+fn op_notifs_new(
   _interface: &mut dyn Interface,
   data: &[u8],
-  zero_copy: Option<ZeroCopyBuf>,
+  _zero_copy: Option<ZeroCopyBuf>,
 ) -> Op {
-  let data_str = std::str::from_utf8(&data[..]).unwrap().to_string();
-  let fut = async move {
-    if let Some(buf) = zero_copy {
-      let buf_str = std::str::from_utf8(&buf[..]).unwrap();
-      println!(
-        "Hello from plugin. data: {} | zero_copy: {}",
-        data_str, buf_str
-      );
-    }
-    let (tx, rx) = futures::channel::oneshot::channel::<Result<(), ()>>();
-    std::thread::spawn(move || {
-      std::thread::sleep(std::time::Duration::from_secs(1));
-      tx.send(Ok(())).unwrap();
-    });
-    assert!(rx.await.is_ok());
-    let result = b"test";
-    let result_box: Buf = Box::new(*result);
-    result_box
+  let mut response: NotifsResponse<NewNotificationResult> = NotifsResponse {
+      err: None,
+      ok: None,
   };
 
-  Op::Async(fut.boxed())
+  let params: NewNotificationParams = serde_json::from_slice(data).unwrap();
+
+  match Notification::new()
+      .summary(&params.title)
+      .body(&params.message)
+      .icon(match &params.icon {
+        Some(value) => value,
+        None => "terminal"
+      })
+      .show() {
+        Ok(_) => {
+          response.ok = Some(NewNotificationResult {});
+        },
+        Err(error) => {
+          response.err = Some(error.to_string());
+        }
+      }
+
+  let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
+
+  Op::Sync(result)
 }
