@@ -6,6 +6,7 @@ Deno bindings for OS notifications. Currently only supports macos and linux usin
 
 - Refactor code & Document code
 - Provide nicer API with all the options of notify-rust
+- Add actions system
 - Make nice README
 
 ## Resources & Credits

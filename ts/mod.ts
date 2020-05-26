@@ -1,14 +1,53 @@
-import { unwrapResponse, opSync } from './plugin.ts';
+import { unwrapResponse, opSync } from "./plugin.ts";
 
-export interface SendNotificationParams {
-    title: string;
-    message: string;
-    icon?: string;
+export type Icon = {
+  /**
+   * Name of the application to use the icon.
+   */
+  app: string;
+} | {
+  /**
+   * File URL to the icon (must be file://).
+   */
+  path: string;
+} | {
+  /**
+   * Name of the icon in an icon theme, must be freedesktop.org compliant.
+   */
+  name: string;
+};
+
+interface INotification {
+  /**
+   * Single line title of the notification.
+   */
+  title: string;
+  /**
+   * Multi-line message of the notification.
+   * May support simple HTML markup on some platforms, see notify-rust.
+   */
+  message: string;
+  /**
+   * Icon to render the notification with.
+   */
+  icon?: Icon;
+  /**
+   * Sound to play when showing the notification.
+   */
+  sound?: string;
 }
 
-export interface SendNotificationResult {
+const defaultOptions: INotification = {
+  title: "",
+  message: "",
+  icon: { name: "terminal" },
+  sound: undefined,
+};
+export interface NotifyResult {
 }
 
-export function sendNotification(params: SendNotificationParams): SendNotificationResult {
-  return unwrapResponse(opSync("notifs_send", params));
+export function notify(options: INotification): NotifyResult {
+  return unwrapResponse(
+    opSync("notifs_send", { ...defaultOptions, ...options }),
+  );
 }
