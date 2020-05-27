@@ -1,5 +1,5 @@
-// Run test with DENO_NOTIFS_PLUGIN_BASE=./target/debug/ DENO_NOTIFS_DEBUG=true deno test --unstable --allow-plugin --allow-all tests/test.ts
-import { notify } from "../ts/mod.ts";
+import { notify, pluginId } from "../ts/prepared.ts";
+import { assert } from "https://deno.land/std@v0.53.0/testing/asserts.ts";
 
 Deno.test({
   name: "Send Notification",
@@ -10,7 +10,14 @@ Deno.test({
       icon: {
         app: "Terminal",
       },
-      sound: "Basso"
+      sound: "Basso",
     });
   },
 });
+
+Deno.test({
+  name: "Check plugin id",
+  async fn(): Promise<void> {
+    assert(pluginId !== null);
+  }
+})

@@ -29,6 +29,7 @@ interface INotification {
   message: string;
   /**
    * Icon to render the notification with.
+   * Set to "terminal" by default or if the icon is not found.
    */
   icon?: Icon;
   /**

@@ -1,12 +1,43 @@
 # deno_notifs
 
-Deno bindings for OS notifications. Currently only supports macos and linux using [notify-rust](https://github.com/hoodie/notify-rust).
+Deno bindings for OS notifications.  
+Supports Windows, macOS, and linux using [notify-rust](https://github.com/hoodie/notify-rust) though some features are platform-specific.
+
+## Usage
+
+A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://github.com/manyuanrong/deno-plugin-prepare) internally so you don't have to download or open the plugin manually.
+
+```ts
+import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/prepared.ts';
+
+await notify({
+  title: 'Hello',
+  message: 'World',
+  icon: {
+    app: "Terminal",
+  },
+  sound: "Basso",
+});
+```
+
+### Manual Loading
+
+If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
+Make sure you [download](https://github.com/PandawanFr/deno_notifs/releases/tag/0.1.0) the correct plugin for your operating system.
+
+```ts
+import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/mod.ts';
+
+// Load the plugin manually
+Deno.openPlugin("./libdeno_notifs.so");
+
+await notify({ title: 'Hello', message: 'World' });
+```
 
 ## TODO
 
-- Make "prepare" logic optional (with a separate prepared.ts import)
 - Provide nicer API with all the options of notify-rust
-- Make nice README
+- Documentation in Markdown
 
 ## Known Issues
 
@@ -20,5 +51,6 @@ Deno bindings for OS notifications. Currently only supports macos and linux usin
 ## Resources & Credits
 
 - Notification system from [notify-rust](https://github.com/hoodie/notify-rust)
-- Plugin system inspired by [deno_webview](https://github.com/eliassjogreen/deno_webview)
+- Plugin import from [deno-plugin-prepare](https://github.com/manyuanrong/deno-plugin-prepare)
+- Plugin system inspired by [deno_webview](https://github.com/eliassjogreen/deno_webview) and [deno_sqlite_plugin](https://github.com/crabmusket/deno_sqlite_plugin)
 - [GH Issue to check out later](https://github.com/denoland/deno/issues/4222)
