@@ -4,7 +4,6 @@ use deno_core::plugin_api::Op;
 use deno_core::plugin_api::ZeroCopyBuf;
 use notify_rust::{get_bundle_identifier_or_default, set_application, Notification};
 use serde::{Deserialize, Serialize};
-use std::path::Path;
 
 #[no_mangle]
 pub fn deno_plugin_init(interface: &mut dyn Interface) {
@@ -50,39 +49,38 @@ fn op_notifs_send(
 
   let params: SendNotificationParams = serde_json::from_slice(data).unwrap();
 
-  // TODO: Modularize these calls
-  match Notification::new()
-    .summary(&params.title)
-    .body(&params.message)
-    .icon(match &params.icon {
-      Some(value) => match value {
-        Icon::App(app_name) => {
-          // Mac needs to pretend to be another app
-          if cfg!(target_os = "macos") {
-            let app_id = get_bundle_identifier_or_default(app_name);
-            if let Err(err) = set_application(&app_id).map_err(|f| format!("{}", f)) {
-              response.err = Some(err);
-            }
-          }
-          app_name
-        }
-        Icon::Path(file_path) => {
-          if Path::new(file_path).exists() {
-            file_path
-          } else {
-            "terminal"
+  let mut notification = Notification::new();
+
+  // Basic notification, title & message
+  notification.summary(&params.title).body(&params.message);
+
+  // Add an icon
+  if let Some(icon_value) = &params.icon {
+    notification.icon(match icon_value {
+      // App Name
+      Icon::App(app_name) => {
+        // Mac needs to pretend to be another app
+        if cfg!(target_os = "macos") {
+          let app_id = get_bundle_identifier_or_default(app_name);
+          if let Err(err) = set_application(&app_id).map_err(|f| format!("{}", f)) {
+            response.err = Some(err);
           }
         }
-        Icon::Name(icon_name) => icon_name,
-      },
-      None => "terminal",
-    })
-    .sound_name(match &params.sound {
-      Some(sound_path) => sound_path,
-      None => "",
-    })
-    .show()
-  {
+        app_name
+      }
+      // Path to icon
+      Icon::Path(file_path) => file_path,
+      // Icon theme name
+      Icon::Name(icon_name) => icon_name,
+    });
+  }
+
+  // Add a sound
+  if let Some(sound_name) = &params.sound {
+    notification.sound_name(sound_name);
+  }
+
+  match notification.show() {
     Ok(_) => {
       response.ok = Some(SendNotificationResult {});
     }
