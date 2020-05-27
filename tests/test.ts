@@ -3,14 +3,14 @@ import { notify } from "../ts/mod.ts";
 
 Deno.test({
   name: "Send Notification",
-  fn(): void {
-    notify({
+  async fn(): Promise<void> {
+    await notify({
       title: "Hey",
       message: "Hello World",
       icon: {
-        app: "Visual Studio Code",
+        app: "Terminal",
       },
-      // sound: "Basso"
+      sound: "Basso"
     });
   },
 });

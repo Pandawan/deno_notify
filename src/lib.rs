@@ -4,6 +4,7 @@ use deno_core::plugin_api::Op;
 use deno_core::plugin_api::ZeroCopyBuf;
 use notify_rust::{get_bundle_identifier_or_default, set_application, Notification};
 use serde::{Deserialize, Serialize};
+use futures::future::FutureExt;
 
 #[no_mangle]
 pub fn deno_plugin_init(interface: &mut dyn Interface) {
@@ -80,16 +81,19 @@ fn op_notifs_send(
     notification.sound_name(sound_name);
   }
 
-  match notification.show() {
-    Ok(_) => {
-      response.ok = Some(SendNotificationResult {});
-    }
-    Err(error) => {
-      response.err = Some(error.to_string());
-    }
+  let fut = async move {
+    match notification.show() {
+      Ok(_) => {
+        response.ok = Some(SendNotificationResult {});
+      }
+      Err(error) => {
+        response.err = Some(error.to_string());
+      }
+    };
+  
+    let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
+    result
   };
 
-  let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
-
-  Op::Sync(result)
+  Op::Async(fut.boxed())
 }

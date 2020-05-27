@@ -1,4 +1,4 @@
-import { prepare } from "./deps.ts";
+import { prepare, deferred } from "./deps.ts";
 import { resolve } from "https://deno.land/std@v0.50.0/path/mod.ts";
 
 let DENO_NOTIFS_PLUGIN_BASE = Deno.env.get("DENO_NOTIFS_PLUGIN_BASE");
@@ -7,7 +7,9 @@ export const PLUGIN_URL_BASE = DENO_NOTIFS_PLUGIN_BASE
   : "https://github.com/PandawanFr/deno_notifs/releases/download/0.1.0";
 
 let DENO_NOTIFS_PLUGIN = Deno.env.get("DENO_NOTIFS_PLUGIN");
-const PLUGIN_URL = DENO_NOTIFS_PLUGIN ? resolvePathToURL(DENO_NOTIFS_PLUGIN) : undefined;
+const PLUGIN_URL = DENO_NOTIFS_PLUGIN
+  ? resolvePathToURL(DENO_NOTIFS_PLUGIN)
+  : undefined;
 const DEBUG = Boolean(Deno.env.get("DENO_NOTIFS_DEBUG"));
 
 let pluginId: number | null = null;
@@ -27,7 +29,7 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 function resolvePathToURL(path: string) {
-  if (path.startsWith('http://') || path.startsWith('https://')) {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
   } else {
     let resolvedPath = resolve(path);
@@ -67,6 +69,31 @@ export function opSync<R extends NotifsResponse<any>>(
   const response = core.dispatch(opId, encode(data))!;
 
   return decode(response) as R;
+}
+
+export async function opAsync<R extends NotifsResponse<any>>(
+  op: string,
+  data: object,
+): Promise<R> {
+  if (pluginId === null) {
+    throw "The plugin must be initialized before use";
+  }
+
+  const opId = getOpId(op);
+  const promise = deferred<R>();
+
+  core.setAsyncHandler(
+    opId,
+    (response) => promise.resolve(decode(response) as R),
+  );
+
+  const response = core.dispatch(opId, encode(data));
+
+  if (response != null || response != undefined) {
+    throw "Expected null response!";
+  }
+
+  return promise;
 }
 
 export function unwrapResponse<T, R extends NotifsResponse<T>>(response: R): T {

@@ -1,4 +1,4 @@
-import { unwrapResponse, opSync } from "./plugin.ts";
+import { unwrapResponse, opAsync } from "./plugin.ts";
 
 export type Icon = {
   /**
@@ -46,8 +46,8 @@ const defaultOptions: INotification = {
 export interface NotifyResult {
 }
 
-export function notify(options: INotification): NotifyResult {
+export async function notify(options: INotification): Promise<NotifyResult> {
   return unwrapResponse(
-    opSync("notifs_send", { ...defaultOptions, ...options }),
+    await opAsync("notifs_send", { ...defaultOptions, ...options }),
   );
 }
