@@ -10,6 +10,10 @@ A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://
 ```ts
 import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/prepared.ts';
 
+// String
+await notify('Message');
+
+// Object
 await notify({
   title: 'Hello',
   message: 'World',
@@ -29,21 +33,24 @@ Make sure you [download](https://github.com/PandawanFr/deno_notifs/releases/tag/
 import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/mod.ts';
 
 // Load the plugin manually
-Deno.openPlugin("./libdeno_notifs.so");
+Deno.openPlugin("./libdeno_notifs.dylib");
 
+// Use notify the same way you would with the prepared import
 await notify({ title: 'Hello', message: 'World' });
 ```
 
 ## TODO
 
-- Provide nicer API with all the options of notify-rust
-- Documentation in Markdown
+- Separate API into platform-specific files (one for each platform) so TS api is nicer
+  - And export a cross-platform version that allows only cross-platform options
+  - This means TS api never lies to you, if you want cross platform you only get a subset, but if you want specific platforms to work differently, you can have your own if/else logic based on the platform you care about.
 
 ## Known Issues
 
 - Many platform-specific features are not implemented
   - I need to figure out a good way to handle platform-specific features while retaining easy to use and understand typings/documentation.
   - Features like actions, subtitle, hints, etc.
+- Custom app icons are only applied if the notification requesting it is the first one being sent on mac
 - Using a custom app icon on mac sometimes crashes
   - From my own experience, this seems to happen with non-default applications.
   - [See this GitHub issue for more information](https://github.com/h4llow3En/mac-notification-sys/issues/8)

@@ -44,11 +44,47 @@ const defaultOptions: INotification = {
   icon: { name: "terminal" },
   sound: undefined,
 };
+
 export interface NotifyResult {
 }
 
-export async function notify(options: INotification): Promise<NotifyResult> {
+/**
+ * Send a simple notification with a message.
+ * @param message
+ * @example
+ * ```ts
+ * await notify('Message');
+ * ```
+ */
+export async function notify(message: string): Promise<NotifyResult>;
+/**
+ * Sends a notification with various options.
+ * @param options
+ * @example
+ * ```ts
+ * await notify({
+ *   title: 'Hello',
+ *   message: 'World',
+ *   icon: {
+ *     app: "Terminal",
+ *   },
+ *   sound: "Basso",
+ * });
+ * ```
+ */
+export async function notify(options: INotification): Promise<NotifyResult>;
+export async function notify(
+  options: string | INotification,
+): Promise<NotifyResult> {
+  const data = typeof options === "string"
+    ? {
+      ...defaultOptions,
+      title: 'deno_notify',
+      message: options,
+    }
+    : { ...defaultOptions, ...options };
+
   return unwrapResponse(
-    await opAsync("notifs_send", { ...defaultOptions, ...options }),
+    await opAsync("notifs_send", data),
   );
 }

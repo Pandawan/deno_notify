@@ -5,7 +5,7 @@
 
 set -e
 
-if [ $1 = "release" ]; then
+if [[ $1 = "release" ]]; then
     cargo build -p deno_notifs --release
 else
     cargo build -p deno_notifs
