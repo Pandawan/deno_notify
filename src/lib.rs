@@ -2,9 +2,9 @@ use deno_core::plugin_api::Buf;
 use deno_core::plugin_api::Interface;
 use deno_core::plugin_api::Op;
 use deno_core::plugin_api::ZeroCopyBuf;
-use notify_rust::{get_bundle_identifier_or_default, set_application, Notification};
-use serde::{Deserialize, Serialize};
 use futures::future::FutureExt;
+use notify_rust::Notification;
+use serde::{Deserialize, Serialize};
 
 #[no_mangle]
 pub fn deno_plugin_init(interface: &mut dyn Interface) {
@@ -61,11 +61,8 @@ fn op_notifs_send(
       // App Name
       Icon::App(app_name) => {
         // Mac needs to pretend to be another app
-        if cfg!(target_os = "macos") {
-          let app_id = get_bundle_identifier_or_default(app_name);
-          if let Err(err) = set_application(&app_id).map_err(|f| format!("{}", f)) {
-            response.err = Some(err);
-          }
+        if let Err(error) = set_app_icon(app_name) {
+          response.err = Some(error);
         }
         app_name
       }
@@ -90,10 +87,26 @@ fn op_notifs_send(
         response.err = Some(error.to_string());
       }
     };
-  
     let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
     result
   };
 
   Op::Async(fut.boxed())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn set_app_icon(_app_name: &String) -> Result<(), String> {
+  Ok(())
+}
+
+#[cfg(target_os = "macos")]
+fn set_app_icon(app_name: &String) -> Result<(), String> {
+  use notify_rust::{get_bundle_identifier_or_default, set_application};
+
+  let app_id = get_bundle_identifier_or_default(app_name);
+  if let Err(err) = set_application(&app_id).map_err(|f| format!("{}", f)) {
+    Err(err)
+  } else {
+    Ok(())
+  }
 }

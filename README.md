@@ -3,6 +3,10 @@
 Deno bindings for OS notifications.  
 Supports Windows, macOS, and linux using [notify-rust](https://github.com/hoodie/notify-rust) though some features are platform-specific.
 
+Note: More features are in the works and the API may change as a result, but the module can already be considered as working.
+
+*Supports Deno v1.0.0 and higher.*
+
 ## Usage
 
 A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://github.com/manyuanrong/deno-plugin-prepare) internally so you don't have to download or open the plugin manually.
@@ -44,6 +48,7 @@ await notify({ title: 'Hello', message: 'World' });
 - Separate API into platform-specific files (one for each platform) so TS api is nicer
   - And export a cross-platform version that allows only cross-platform options
   - This means TS api never lies to you, if you want cross platform you only get a subset, but if you want specific platforms to work differently, you can have your own if/else logic based on the platform you care about.
+  - On the rust side, I could also have separating logic like notify-rust to enable for more macOS-specific code (such as delivery_date which is not available in notify-rust but is available in mac-notification-sys).
 
 ## Known Issues
 
@@ -51,6 +56,7 @@ await notify({ title: 'Hello', message: 'World' });
   - I need to figure out a good way to handle platform-specific features while retaining easy to use and understand typings/documentation.
   - Features like actions, subtitle, hints, etc.
 - Custom app icons are only applied if the notification requesting it is the first one being sent on mac
+  - This means an app icon cannot be changed once set, and cannot be changed even if it wasn't set in the first one.
 - Using a custom app icon on mac sometimes crashes
   - From my own experience, this seems to happen with non-default applications.
   - [See this GitHub issue for more information](https://github.com/h4llow3En/mac-notification-sys/issues/8)

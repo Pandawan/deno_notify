@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - "Cargo.toml"
+      - "src/**"
+      - "ts/**"
+      - ".github/workflows/**"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: ${{ matrix.kind }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        # I can't get Windows to work so I won't build for it right now
+        os: [macOS-latest, ubuntu-latest ] # windows-latest]
+    
+    env:
+      GH_ACTIONS: true
+      RUST_BACKTRACE: full
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Setup deno
+        uses: denolib/setup-deno@master
+        with:
+          deno-version: v1.x
+
+      - name: Install required build packages
+        if: startsWith(matrix.os, 'ubuntu')
+        run: sudo apt-get install libdbus-1-dev pkg-config libdbus-1-3
+
+      - name: Log versions
+        run: |
+          deno --version
+          rustc --version
+          cargo --version
+
+      - name: Build (macos, linux)
+        run: cargo build --verbose --release --locked
+
+      - name: Run tests
+        env: 
+          DENO_NOTIFS_PLUGIN_BASE: ./target/release/
+          DENO_NOTIFS_DEBUG: true
+        if: startsWith(matrix.os, 'macOS')
+        run: deno test --unstable --allow-all tests/test.ts
+
+      - name: Release Plugin
+        uses: softprops/action-gh-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "deno_notifs release"
+          draft: true
+          # TODO: Once Windows building is back, add this line: target/release/deno_notifs.dll
+          files: |
+            ./target/release/libdeno_notifs.dylib
+            ./target/release/libdeno_notifs.so
