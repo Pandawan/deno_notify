@@ -1,4 +1,4 @@
-import { unwrapResponse, opAsync } from "./plugin.ts";
+import { unwrapResponse, opSync } from "./plugin.ts";
 
 export type Icon = {
   /**
@@ -53,16 +53,16 @@ export interface NotifyResult {
  * @param message
  * @example
  * ```ts
- * await notify('Message');
+ * notify('Message');
  * ```
  */
-export async function notify(message: string): Promise<NotifyResult>;
+export function notify(message: string): NotifyResult;
 /**
  * Sends a notification with various options.
  * @param options
  * @example
  * ```ts
- * await notify({
+ * notify({
  *   title: 'Hello',
  *   message: 'World',
  *   icon: {
@@ -72,19 +72,19 @@ export async function notify(message: string): Promise<NotifyResult>;
  * });
  * ```
  */
-export async function notify(options: INotification): Promise<NotifyResult>;
-export async function notify(
+export function notify(options: INotification): NotifyResult;
+export function notify(
   options: string | INotification,
-): Promise<NotifyResult> {
+): NotifyResult {
   const data = typeof options === "string"
     ? {
       ...defaultOptions,
-      title: 'deno_notify',
+      title: "deno_notify",
       message: options,
     }
     : { ...defaultOptions, ...options };
 
   return unwrapResponse(
-    await opAsync("notifs_send", data),
+    opSync("notifs_send", data),
   );
 }

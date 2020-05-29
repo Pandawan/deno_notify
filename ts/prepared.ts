@@ -3,7 +3,7 @@ import { resolve } from "https://deno.land/std@v0.53.0/path/mod.ts";
 
 export * from "./mod.ts";
 
-const releaseUrl = "https://github.com/PandawanFr/deno_notifs/releases/download/0.1.0";
+const releaseUrl = "https://github.com/PandawanFr/deno_notifs/releases/download/0.1.1";
 
 let DENO_NOTIFS_PLUGIN_BASE = Deno.env.get("DENO_NOTIFS_PLUGIN_BASE");
 export const PLUGIN_URL_BASE = DENO_NOTIFS_PLUGIN_BASE

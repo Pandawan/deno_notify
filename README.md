@@ -14,11 +14,11 @@ A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://
 ```ts
 import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/prepared.ts';
 
-// String
-await notify('Message');
+// Pass a simple message string
+notify('Message');
 
-// Object
-await notify({
+// Pass an options object
+notify({
   title: 'Hello',
   message: 'World',
   icon: {
@@ -40,11 +40,12 @@ import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/mod.
 Deno.openPlugin("./libdeno_notifs.dylib");
 
 // Use notify the same way you would with the prepared import
-await notify({ title: 'Hello', message: 'World' });
+notify({ title: 'Hello', message: 'World' });
 ```
 
 ## TODO
 
+- Find a way to test in GH actions for Linux & Windows
 - Separate API into platform-specific files (one for each platform) so TS api is nicer
   - And export a cross-platform version that allows only cross-platform options
   - This means TS api never lies to you, if you want cross platform you only get a subset, but if you want specific platforms to work differently, you can have your own if/else logic based on the platform you care about.

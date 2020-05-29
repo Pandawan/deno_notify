@@ -2,7 +2,6 @@ use deno_core::plugin_api::Buf;
 use deno_core::plugin_api::Interface;
 use deno_core::plugin_api::Op;
 use deno_core::plugin_api::ZeroCopyBuf;
-use futures::future::FutureExt;
 use notify_rust::Notification;
 use serde::{Deserialize, Serialize};
 
@@ -61,7 +60,7 @@ fn op_notifs_send(
       // App Name
       Icon::App(app_name) => {
         // Mac needs to pretend to be another app
-        if let Err(error) = set_app_icon(app_name) {
+        if let Err(error) = set_app_identifier(app_name) {
           response.err = Some(error);
         }
         app_name
@@ -78,29 +77,28 @@ fn op_notifs_send(
     notification.sound_name(sound_name);
   }
 
-  let fut = async move {
-    match notification.show() {
-      Ok(_) => {
-        response.ok = Some(SendNotificationResult {});
-      }
-      Err(error) => {
-        response.err = Some(error.to_string());
-      }
-    };
-    let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
-    result
+  // TODO: When adding .wait_for_action support, convert this to a future (and return async)
+  // See: https://github.com/PandawanFr/deno_notifs/blob/a0ebd0f0eb9ba7c9237f165e99f420692dd7d283/src/lib.rs#L81
+  match notification.show() {
+    Ok(_) => {
+      response.ok = Some(SendNotificationResult {});
+    }
+    Err(error) => {
+      response.err = Some(error.to_string());
+    }
   };
+  let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
 
-  Op::Async(fut.boxed())
+  Op::Sync(result)
 }
 
 #[cfg(not(target_os = "macos"))]
-fn set_app_icon(_app_name: &String) -> Result<(), String> {
+fn set_app_identifier(_app_name: &String) -> Result<(), String> {
   Ok(())
 }
 
 #[cfg(target_os = "macos")]
-fn set_app_icon(app_name: &String) -> Result<(), String> {
+fn set_app_identifier(app_name: &String) -> Result<(), String> {
   use notify_rust::{get_bundle_identifier_or_default, set_application};
 
   let app_id = get_bundle_identifier_or_default(app_name);
