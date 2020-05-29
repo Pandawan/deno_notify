@@ -12,7 +12,7 @@ Note: More features are in the works and the API may change as a result, but the
 A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://github.com/manyuanrong/deno-plugin-prepare) internally so you don't have to download or open the plugin manually.
 
 ```ts
-import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/prepared.ts';
+import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.1/ts/prepared.ts';
 
 // Pass a simple message string
 notify('Message');
@@ -31,10 +31,10 @@ notify({
 ### Manual Loading
 
 If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
-Make sure you [download](https://github.com/PandawanFr/deno_notifs/releases/tag/0.1.0) the correct plugin for your operating system.
+Make sure you [download](https://github.com/PandawanFr/deno_notifs/releases/tag/0.1.1) the correct plugin for your operating system.
 
 ```ts
-import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.0/ts/mod.ts';
+import { notify } from 'https://denopkg.com/PandawanFr/deno_notifs@0.1.1/ts/mod.ts';
 
 // Load the plugin manually
 Deno.openPlugin("./libdeno_notifs.dylib");
