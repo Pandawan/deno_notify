@@ -1,5 +1,5 @@
 [package]
-name = "deno_notifs"
+name = "deno_notify"
 version = "0.1.1"
 authors = ["Pandawan <pandawanfr@gmail.com>"]
 edition = "2018"

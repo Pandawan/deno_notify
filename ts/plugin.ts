@@ -36,12 +36,12 @@ function getOpId(op: string): number {
   return id;
 }
 
-export interface NotifsResponse<T> {
+export interface PluginResponse<T> {
   err?: string;
   ok?: T;
 }
 
-export function opSync<R extends NotifsResponse<any>>(
+export function opSync<R extends PluginResponse<any>>(
   op: string,
   data: object,
 ): R {
@@ -51,7 +51,7 @@ export function opSync<R extends NotifsResponse<any>>(
   return decode(response) as R;
 }
 
-export async function opAsync<R extends NotifsResponse<any>>(
+export async function opAsync<R extends PluginResponse<any>>(
   op: string,
   data: object,
 ): Promise<R> {
@@ -72,7 +72,7 @@ export async function opAsync<R extends NotifsResponse<any>>(
   return promise;
 }
 
-export function unwrapResponse<T, R extends NotifsResponse<T>>(response: R): T {
+export function unwrapResponse<T, R extends PluginResponse<T>>(response: R): T {
   if (response.err) {
     throw response.err;
   }

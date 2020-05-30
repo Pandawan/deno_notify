@@ -85,6 +85,6 @@ export function notify(
     : { ...defaultOptions, ...options };
 
   return unwrapResponse(
-    opSync("notifs_send", data),
+    opSync("notify_send", data),
   );
 }

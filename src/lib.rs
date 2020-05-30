@@ -7,11 +7,11 @@ use serde::{Deserialize, Serialize};
 
 #[no_mangle]
 pub fn deno_plugin_init(interface: &mut dyn Interface) {
-  interface.register_op("notifs_send", op_notifs_send);
+  interface.register_op("notify_send", op_notify_send);
 }
 
 #[derive(Serialize)]
-struct NotifsResponse<T> {
+struct NotifyResponse<T> {
   err: Option<String>,
   ok: Option<T>,
 }
@@ -37,12 +37,12 @@ struct SendNotificationParams {
 #[derive(Serialize)]
 struct SendNotificationResult {}
 
-fn op_notifs_send(
+fn op_notify_send(
   _interface: &mut dyn Interface,
   data: &[u8],
   _zero_copy: Option<ZeroCopyBuf>,
 ) -> Op {
-  let mut response: NotifsResponse<SendNotificationResult> = NotifsResponse {
+  let mut response: NotifyResponse<SendNotificationResult> = NotifyResponse {
     err: None,
     ok: None,
   };
@@ -78,7 +78,7 @@ fn op_notifs_send(
   }
 
   // TODO: When adding .wait_for_action support, convert this to a future (and return async)
-  // See: https://github.com/PandawanFr/deno_notifs/blob/a0ebd0f0eb9ba7c9237f165e99f420692dd7d283/src/lib.rs#L81
+  // See: https://github.com/PandawanFr/deno_notify/blob/a0ebd0f0eb9ba7c9237f165e99f420692dd7d283/src/lib.rs#L81
   match notification.show() {
     Ok(_) => {
       response.ok = Some(SendNotificationResult {});

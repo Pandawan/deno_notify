@@ -49,8 +49,8 @@ jobs:
 
       - name: Run tests (macOS)
         env: 
-          DENO_NOTIFS_PLUGIN_BASE: ./target/release/
-          DENO_NOTIFS_DEBUG: true
+          DENO_NOTIFY_PLUGIN_BASE: ./target/release/
+          DENO_NOTIFY_DEBUG: true
         if: startsWith(matrix.os, 'macOS')
         run: deno test --unstable --allow-all tests/test.ts
 
@@ -59,9 +59,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "deno_notifs release"
+          tag_name: "deno_notify release"
           draft: true
           files: |
-            ./target/release/libdeno_notifs.dylib
-            ./target/release/libdeno_notifs.so
-            ./target/release/deno_notifs.dll
+            ./target/release/libdeno_notify.dylib
+            ./target/release/libdeno_notify.so
+            ./target/release/deno_notify.dll

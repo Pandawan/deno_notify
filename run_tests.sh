@@ -6,10 +6,10 @@
 set -e
 
 if [[ $1 = "release" ]]; then
-    cargo build -p deno_notifs --release
+    cargo build -p deno_notify --release
 else
-    cargo build -p deno_notifs
+    cargo build -p deno_notify
 fi
 
-DENO_NOTIFS_PLUGIN_BASE=./target/debug/ DENO_NOTIFS_DEBUG=true \
+DENO_NOTIFY_PLUGIN_BASE=./target/debug/ DENO_NOTIFY_DEBUG=true \
 deno test --unstable --allow-all tests/test.ts
