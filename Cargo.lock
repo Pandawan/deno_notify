@@ -149,7 +149,7 @@ dependencies = [
 
 [[package]]
 name = "deno_notify"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "deno_core",
  "futures 0.3.5",
@@ -248,7 +248,7 @@ dependencies = [
  "proc-macro-hack",
  "proc-macro2",
  "quote 1.0.6",
- "syn 1.0.28",
+ "syn 1.0.29",
 ]
 
 [[package]]
@@ -497,7 +497,7 @@ checksum = "e58db2081ba5b4c93bd6be09c40fd36cb9193a8336c384f3b40012e531aa7e40"
 dependencies = [
  "proc-macro2",
  "quote 1.0.6",
- "syn 1.0.28",
+ "syn 1.0.29",
 ]
 
 [[package]]
@@ -604,22 +604,22 @@ checksum = "ed3d612bc64430efeb3f7ee6ef26d590dce0c43249217bddc62112540c7941e1"
 
 [[package]]
 name = "serde"
-version = "1.0.110"
+version = "1.0.111"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99e7b308464d16b56eba9964e4972a3eee817760ab60d88c3f86e1fecb08204c"
+checksum = "c9124df5b40cbd380080b2cc6ab894c040a3070d995f5c9dc77e18c34a8ae37d"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.110"
+version = "1.0.111"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "818fbf6bfa9a42d3bfcaca148547aa00c7b915bec71d1757aa2d44ca68771984"
+checksum = "3f2c3ac8e6ca1e9c80b8be1023940162bf81ae3cffbb1809474152f2ce1eb250"
 dependencies = [
  "proc-macro2",
  "quote 1.0.6",
- "syn 1.0.28",
+ "syn 1.0.29",
 ]
 
 [[package]]
@@ -674,9 +674,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.28"
+version = "1.0.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7e33a62f20d3dc02a1bc9c1d385f92b459bbf35e4dc325eed20c53db5b90c03"
+checksum = "bb37da98a55b1d08529362d9cbb863be17556873df2585904ab9d2bc951291d0"
 dependencies = [
  "proc-macro2",
  "quote 1.0.6",

@@ -3,25 +3,42 @@ import { resolve } from "https://deno.land/std@v0.53.0/path/mod.ts";
 
 export * from "./mod.ts";
 
-const releaseUrl = "https://github.com/PandawanFr/deno_notify/releases/download/0.1.2";
+const releaseUrl =
+  "https://github.com/PandawanFr/deno_notify/releases/download/0.2.0";
 
-let DENO_NOTIFY_PLUGIN_BASE = Deno.env.get("DENO_NOTIFY_PLUGIN_BASE");
+/**
+ * Don't require env permissions if they're not given.
+ * This means the DENO_NOTIF_ environment variables are only active if --allow-env is passed.
+ */
+const hasEnvironmentPermissions =
+  (await Deno.permissions.query({ name: "env" })).state === "granted";
+
+let DENO_NOTIFY_PLUGIN_BASE = hasEnvironmentPermissions
+  ? Deno.env.get("DENO_NOTIFY_PLUGIN_BASE")
+  : undefined;
 export const PLUGIN_URL_BASE = DENO_NOTIFY_PLUGIN_BASE
   ? resolvePathToURL(DENO_NOTIFY_PLUGIN_BASE)
   : releaseUrl;
 
-let DENO_NOTIFY_PLUGIN = Deno.env.get("DENO_NOTIFY_PLUGIN");
+let DENO_NOTIFY_PLUGIN = hasEnvironmentPermissions
+  ? Deno.env.get("DENO_NOTIFY_PLUGIN")
+  : undefined;
 const PLUGIN_URL = DENO_NOTIFY_PLUGIN
   ? resolvePathToURL(DENO_NOTIFY_PLUGIN)
   : undefined;
-const DEBUG = Boolean(Deno.env.get("DENO_NOTIFY_DEBUG"));
+const DEBUG = hasEnvironmentPermissions
+  ? Boolean(Deno.env.get("DENO_NOTIFY_DEBUG"))
+  : false;
 
 /**
  * Resolves local paths to file:// URLs, leaving any other type of path as is.
  * @param path The path to resolve
  */
 function resolvePathToURL(path: string) {
-  if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith('file://')) {
+  if (
+    path.startsWith("http://") || path.startsWith("https://") ||
+    path.startsWith("file://")
+  ) {
     return path;
   } else {
     let resolvedPath = resolve(path);
@@ -56,7 +73,10 @@ function unload(): void {
 
 let _pluginId: number | null = 0;
 
-export const pluginId  = _pluginId;
+export function getPluginId() {
+  return _pluginId;
+}
 
-await load(!DEBUG, DEBUG);
+_pluginId = await load(!DEBUG, DEBUG);
+
 window.addEventListener("unload", unload);

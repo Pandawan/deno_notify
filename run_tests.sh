@@ -11,14 +11,14 @@ set -e
 if [[ $1 = "release" ]];  then
     cargo build -p deno_notify --release
 
-    DENO_NOTIFY_PLUGIN_BASE=./target/release/ 
+    export DENO_NOTIFY_PLUGIN_BASE=./target/release/ 
 
 # Build in debug mode if not release and not online
 elif [[ $1 != "online" ]];  then
     cargo build -p deno_notify
 
-    DENO_NOTIFY_PLUGIN_BASE=./target/debug/
+    export DENO_NOTIFY_PLUGIN_BASE=./target/debug/
 fi
 
-DENO_NOTIFY_DEBUG=true
+export DENO_NOTIFY_DEBUG=true
 deno test --unstable --allow-all tests/test.ts

@@ -7,17 +7,29 @@ Note: More features are in the works and the API may change as a result, but the
 
 *Supports Deno v1.0.0 and higher.*
 
+## Important
+
+Because the plug-in API of Deno is still in an unstable state, the `--unstable` flag needs to be used. The minimum permissions required to run `deno_notify` should be
+
+```sh
+# With prepared.ts (these extra permissions are required for downloading and caching the plugin)
+deno run --unstable --allow-plugin --allow-read --allow-write --allow-net xxx.ts
+
+# With manual plugin loading (mod.ts)
+deno run --unstable --allow-plugin xxx.ts
+```
+
 ## Usage
 
 A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://github.com/manyuanrong/deno-plugin-prepare) internally so you don't have to download or open the plugin manually.
 
 ```ts
-import { notify } from 'https://denopkg.com/PandawanFr/deno_notify@0.1.2/ts/prepared.ts';
+import { notify } from 'https://deno.land/x/deno_notify@0.2.0/ts/prepared.ts';
 
 // Pass a simple message string
 notify('Message');
 
-// Pass an options object
+// Pass an options object (See mod.ts's INotification)
 notify({
   title: 'Hello',
   message: 'World',
@@ -31,10 +43,10 @@ notify({
 ### Manual Loading
 
 If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
-Make sure you [download](https://github.com/PandawanFr/deno_notify/releases/tag/0.1.2) the correct plugin for your operating system.
+Make sure you [download](https://github.com/PandawanFr/deno_notify/releases/tag/0.2.0) the correct plugin for your operating system.
 
 ```ts
-import { notify } from 'https://denopkg.com/PandawanFr/deno_notify@0.1.2/ts/mod.ts';
+import { notify } from 'https://deno.land/x/deno_notify@0.2.0/ts/mod.ts';
 
 // Load the plugin manually
 Deno.openPlugin("./libdeno_notify.dylib");
@@ -46,6 +58,7 @@ notify({ title: 'Hello', message: 'World' });
 ## TODO
 
 - Find a way to test in GH actions for Linux & Windows
+- Find out why Windows notifications only appear in action center
 - Separate API into platform-specific files (one for each platform) so TS api is nicer
   - And export a cross-platform version that allows only cross-platform options
   - This means TS api never lies to you, if you want cross platform you only get a subset, but if you want specific platforms to work differently, you can have your own if/else logic based on the platform you care about.

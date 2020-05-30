@@ -20,8 +20,9 @@ export type Icon = {
 interface INotification {
   /**
    * Single line title of the notification.
+   * Defaults to "deno_notify"
    */
-  title: string;
+  title?: string;
   /**
    * Multi-line message of the notification.
    * May support simple HTML markup on some platforms, see notify-rust.
@@ -39,14 +40,13 @@ interface INotification {
 }
 
 const defaultOptions: INotification = {
-  title: "",
+  title: "deno_notify",
   message: "",
   icon: { name: "terminal" },
   sound: undefined,
 };
 
-export interface NotifyResult {
-}
+export interface NotifyResult {}
 
 /**
  * Send a simple notification with a message.
@@ -79,7 +79,6 @@ export function notify(
   const data = typeof options === "string"
     ? {
       ...defaultOptions,
-      title: "deno_notify",
       message: options,
     }
     : { ...defaultOptions, ...options };
