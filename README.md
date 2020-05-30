@@ -1,6 +1,6 @@
 # deno_notifs
 
-Deno bindings for OS notifications.  
+Send desktop notifications on all platforms in Deno.  
 Supports Windows, macOS, and linux using [notify-rust](https://github.com/hoodie/notify-rust) though some features are platform-specific.
 
 Note: More features are in the works and the API may change as a result, but the module can already be considered as working.
