@@ -4,7 +4,7 @@ import { resolve } from "https://deno.land/std@v0.54.0/path/mod.ts";
 export * from "./mod.ts";
 
 const releaseUrl =
-  "https://github.com/PandawanFr/deno_notify/releases/download/0.2.1";
+  "https://github.com/PandawanFr/deno_notify/releases/download/0.2.2";
 
 /**
  * Don't require env permissions if they're not given.
