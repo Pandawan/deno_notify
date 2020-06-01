@@ -149,7 +149,7 @@ dependencies = [
 
 [[package]]
 name = "deno_notify"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "deno_core",
  "futures 0.3.5",
@@ -248,7 +248,7 @@ dependencies = [
  "proc-macro-hack",
  "proc-macro2",
  "quote 1.0.6",
- "syn 1.0.29",
+ "syn 1.0.30",
 ]
 
 [[package]]
@@ -497,7 +497,7 @@ checksum = "e58db2081ba5b4c93bd6be09c40fd36cb9193a8336c384f3b40012e531aa7e40"
 dependencies = [
  "proc-macro2",
  "quote 1.0.6",
- "syn 1.0.29",
+ "syn 1.0.30",
 ]
 
 [[package]]
@@ -526,9 +526,9 @@ checksum = "8e946095f9d3ed29ec38de908c22f95d9ac008e424c7bcae54c75a79c527c694"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.17"
+version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1502d12e458c49a4c9cbff560d0fe0060c252bc29799ed94ca2ed4bb665a0101"
+checksum = "beae6331a816b1f65d04c45b078fd8e6c93e8071771f41b8163255bbd8d7c8fa"
 dependencies = [
  "unicode-xid 0.2.0",
 ]
@@ -598,9 +598,9 @@ dependencies = [
 
 [[package]]
 name = "ryu"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed3d612bc64430efeb3f7ee6ef26d590dce0c43249217bddc62112540c7941e1"
+checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
 
 [[package]]
 name = "serde"
@@ -619,7 +619,7 @@ checksum = "3f2c3ac8e6ca1e9c80b8be1023940162bf81ae3cffbb1809474152f2ce1eb250"
 dependencies = [
  "proc-macro2",
  "quote 1.0.6",
- "syn 1.0.29",
+ "syn 1.0.30",
 ]
 
 [[package]]
@@ -674,9 +674,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.29"
+version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb37da98a55b1d08529362d9cbb863be17556873df2585904ab9d2bc951291d0"
+checksum = "93a56fabc59dce20fe48b6c832cc249c713e7ed88fa28b0ee0a3bfcaae5fe4e2"
 dependencies = [
  "proc-macro2",
  "quote 1.0.6",

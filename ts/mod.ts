@@ -17,7 +17,7 @@ export type Icon = {
   name: string;
 };
 
-interface INotification {
+export interface NotifyOptions {
   /**
    * Single line title of the notification.
    * Defaults to "deno_notify"
@@ -39,7 +39,7 @@ interface INotification {
   sound?: string;
 }
 
-const defaultOptions: INotification = {
+const defaultOptions: NotifyOptions = {
   title: "deno_notify",
   message: "",
   icon: { name: "terminal" },
@@ -72,9 +72,9 @@ export function notify(message: string): NotifyResult;
  * });
  * ```
  */
-export function notify(options: INotification): NotifyResult;
+export function notify(options: NotifyOptions): NotifyResult;
 export function notify(
-  options: string | INotification,
+  options: string | NotifyOptions,
 ): NotifyResult {
   const data = typeof options === "string"
     ? {
