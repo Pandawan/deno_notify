@@ -40,7 +40,7 @@ struct SendNotificationResult {}
 fn op_notify_send(
   _interface: &mut dyn Interface,
   data: &[u8],
-  _zero_copy: Option<ZeroCopyBuf>,
+  _zero_copy: &mut [ZeroCopyBuf],
 ) -> Op {
   let mut response: NotifyResponse<SendNotificationResult> = NotifyResponse {
     err: None,

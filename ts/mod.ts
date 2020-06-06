@@ -2,17 +2,20 @@ import { unwrapResponse, opSync } from "./plugin.ts";
 
 export type Icon = {
   /**
-   * Name of the application to use the icon.
+   * **(MACOS)** Name of the application to use the icon from.
+   * 
+   * Note: macOS does not explicitly support custom icons. 
+   * To circumvent this, this option pretends your notifications are sent the given application.
    */
   app: string;
 } | {
   /**
-   * File URL to the icon (must be file://).
+   * **(UNIX, WINDOWS)** A file:// URL to the icon.
    */
   path: string;
 } | {
   /**
-   * Name of the icon in an icon theme, must be freedesktop.org compliant.
+   * **(UNIX)** Name of the icon in an icon theme, must be freedesktop.org compliant.
    */
   name: string;
 };
@@ -34,7 +37,7 @@ export interface NotifyOptions {
    */
   icon?: Icon;
   /**
-   * Sound to play when showing the notification.
+   * **(MACOS, WINDOWS)** Sound to play when showing the notification.
    */
   sound?: string;
 }
@@ -53,7 +56,7 @@ export interface NotifyResult {}
  * @param message
  * @example
  * ```ts
- * notify('Message');
+ * notify('My message');
  * ```
  */
 export function notify(message: string): NotifyResult;
