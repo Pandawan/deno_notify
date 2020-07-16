@@ -17,7 +17,7 @@ A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://
 *You will need to run using the `--unstable` and `--allow-all` permissions to allow for automatic plugin loading and caching.*
 
 ```ts
-import { notify } from 'https://deno.land/x/deno_notify@0.3.0/ts/prepared.ts';
+import { notify } from 'https://deno.land/x/deno_notify@0.4.0/ts/prepared.ts';
 
 // Pass a simple message string
 notify('My message');
@@ -36,12 +36,12 @@ notify({
 ### Manual Loading
 
 If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
-Make sure you [download](https://github.com/PandawanFr/deno_notify/releases/tag/0.3.0) the correct plugin for your operating system.
+Make sure you [download](https://github.com/PandawanFr/deno_notify/releases/tag/0.4.0) the correct plugin for your operating system.
 
 *Because plugin loading is handled manually, you only need the `--unstable` and `--allow-plugin` permissions.*
 
 ```ts
-import { notify } from 'https://deno.land/x/deno_notify@0.3.0/ts/mod.ts';
+import { notify } from 'https://deno.land/x/deno_notify@0.4.0/ts/mod.ts';
 
 // Load the plugin manually
 Deno.openPlugin("./libdeno_notify.dylib");

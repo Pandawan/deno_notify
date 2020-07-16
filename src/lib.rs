@@ -39,13 +39,16 @@ struct SendNotificationResult {}
 
 fn op_notify_send(
   _interface: &mut dyn Interface,
-  data: &[u8],
-  _zero_copy: &mut [ZeroCopyBuf],
+  zero_copy: &mut [ZeroCopyBuf],
 ) -> Op {
   let mut response: NotifyResponse<SendNotificationResult> = NotifyResponse {
     err: None,
     ok: None,
   };
+
+  let zero_copy = zero_copy.to_vec();
+
+  let data = &zero_copy[0];
 
   let params: SendNotificationParams = serde_json::from_slice(data).unwrap();
 
@@ -87,8 +90,9 @@ fn op_notify_send(
       response.err = Some(error.to_string());
     }
   };
+  
   let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
-
+  
   Op::Sync(result)
 }
 

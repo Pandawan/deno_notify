@@ -1,4 +1,4 @@
-import { deferred } from "https://deno.land/std@0.54.0/async/mod.ts";
+import { deferred } from "https://deno.land/std@0.61.0/async/mod.ts";
 
 // @ts-ignore
 const core = Deno.core as {
