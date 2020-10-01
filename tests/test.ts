@@ -1,5 +1,5 @@
 import { notify, getPluginId } from "../ts/prepared.ts";
-import { assert } from "https://deno.land/std@v0.55.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.71.0/testing/asserts.ts";
 
 Deno.test("Check plugin id", () => {
   assert(getPluginId() !== null && getPluginId() !== 0);
@@ -19,7 +19,7 @@ Deno.test("Send complete notification", () => {
 
 Deno.test("Send partial notification", () => {
   notify({
-    message: "A partial notification"
+    message: "A partial notification",
   });
 });
 
