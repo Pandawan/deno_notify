@@ -81,7 +81,7 @@ fn op_notify_send(
   }
 
   // TODO: When adding .wait_for_action support, convert this to a future (and return async)
-  // See: https://github.com/PandawanFr/deno_notify/blob/a0ebd0f0eb9ba7c9237f165e99f420692dd7d283/src/lib.rs#L81
+  // See: https://github.com/Pandawan/deno_notify/blob/a0ebd0f0eb9ba7c9237f165e99f420692dd7d283/src/lib.rs#L81
   match notification.show() {
     Ok(_) => {
       response.ok = Some(SendNotificationResult {});

@@ -1,7 +1,7 @@
 # deno_notify
 
-[![license](https://img.shields.io/github/license/PandawanFr/deno_notify)](https://github.com/PandawanFr/deno_notify/blob/master/LICENSE)
-[![build](https://img.shields.io/github/workflow/status/PandawanFr/deno_notify/Build)](https://github.com/PandawanFr/deno_notify/actions)
+[![license](https://img.shields.io/github/license/Pandawan/deno_notify)](https://github.com/Pandawan/deno_notify/blob/master/LICENSE)
+[![build](https://img.shields.io/github/workflow/status/Pandawan/deno_notify/Build)](https://github.com/Pandawan/deno_notify/actions)
 [![deno version](https://img.shields.io/badge/deno-1.4.2-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/deno_notify/ts/mod.ts)
 
@@ -36,7 +36,7 @@ notify({
 ### Manual Loading
 
 If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
-Make sure you [download](https://github.com/PandawanFr/deno_notify/releases/tag/0.4.1) the correct plugin for your operating system.
+Make sure you [download](https://github.com/Pandawan/deno_notify/releases/tag/0.4.1) the correct plugin for your operating system.
 
 *Because plugin loading is handled manually, you only need the `--unstable` and `--allow-plugin` permissions.*
 
@@ -52,6 +52,7 @@ notify({ title: 'Hello', message: 'World' });
 
 ## TODO
 
+- Update the rust code to use [the new op API](https://deno.land/posts/v1.4#changes-to-codedeno_corecode-rust-api)
 - Integrate my mac-notification-sys changes into notify-rust so I can add more cross-platform features.
 - Find a way to test in GH actions for Linux & Windows
 - Change API to mirror the [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/notification)
