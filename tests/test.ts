@@ -1,5 +1,5 @@
 import { notify, getPluginId } from "../ts/prepared.ts";
-import { assert } from "https://deno.land/std@0.71.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.78.0/testing/asserts.ts";
 
 Deno.test("Check plugin id", () => {
   assert(getPluginId() !== null && getPluginId() !== 0);
