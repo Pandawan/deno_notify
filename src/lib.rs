@@ -1,4 +1,3 @@
-use deno_core::plugin_api::Buf;
 use deno_core::plugin_api::Interface;
 use deno_core::plugin_api::Op;
 use deno_core::plugin_api::ZeroCopyBuf;
@@ -91,7 +90,7 @@ fn op_notify_send(
     }
   };
   
-  let result: Buf = serde_json::to_vec(&response).unwrap().into_boxed_slice();
+  let result: Box<[u8]> = serde_json::to_vec(&response).unwrap().into_boxed_slice();
   
   Op::Sync(result)
 }

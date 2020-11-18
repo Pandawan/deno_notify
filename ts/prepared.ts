@@ -1,10 +1,10 @@
-import { prepare } from "https://deno.land/x/plugin_prepare@v0.7.5/mod.ts";
+import { prepare } from "https://deno.land/x/plugin_prepare@v0.8.0/mod.ts";
 import { resolve } from "https://deno.land/std@0.78.0/path/mod.ts";
 
 export * from "./mod.ts";
 
 const releaseUrl =
-  "https://github.com/Pandawan/deno_notify/releases/download/0.4.3";
+  "https://github.com/Pandawan/deno_notify/releases/download/0.4.4";
 
 /**
  * Don't require env permissions if they're not given.
