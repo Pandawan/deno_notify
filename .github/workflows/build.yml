@@ -32,7 +32,7 @@ jobs:
       - name: Setup deno
         uses: denolib/setup-deno@master
         with:
-          deno-version: v1.4.2
+          deno-version: v1.8.3
 
       - name: Install required build packages (linux)
         if: startsWith(matrix.os, 'ubuntu')

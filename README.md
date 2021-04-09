@@ -2,7 +2,7 @@
 
 [![license](https://img.shields.io/github/license/Pandawan/deno_notify)](https://github.com/Pandawan/deno_notify/blob/master/LICENSE)
 [![build](https://img.shields.io/github/workflow/status/Pandawan/deno_notify/Build)](https://github.com/Pandawan/deno_notify/actions)
-[![deno version](https://img.shields.io/badge/deno-1.5.3-success)](https://github.com/denoland/deno)
+[![deno version](https://img.shields.io/badge/deno-1.8.3-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/deno_notify/ts/mod.ts)
 
 Send desktop notifications on all platforms in Deno.  
@@ -17,7 +17,7 @@ A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://
 *You will need to run using the `--unstable` and `--allow-all` permissions to allow for automatic plugin loading and caching.*
 
 ```ts
-import { notify } from 'https://deno.land/x/deno_notify@0.4.4/ts/prepared.ts';
+import { notify } from 'https://deno.land/x/deno_notify@0.4.5/ts/prepared.ts';
 
 // Pass a simple message string
 notify('My message');
@@ -36,12 +36,12 @@ notify({
 ### Manual Loading
 
 If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
-Make sure you [download](https://github.com/Pandawan/deno_notify/releases/tag/0.4.4) the correct plugin for your operating system.
+Make sure you [download](https://github.com/Pandawan/deno_notify/releases/tag/0.4.5) the correct plugin for your operating system.
 
 *Because plugin loading is handled manually, you only need the `--unstable` and `--allow-plugin` permissions.*
 
 ```ts
-import { notify } from 'https://deno.land/x/deno_notify@0.4.4/ts/mod.ts';
+import { notify } from 'https://deno.land/x/deno_notify@0.4.5/ts/mod.ts';
 
 // Load the plugin manually
 Deno.openPlugin("./libdeno_notify.dylib");
