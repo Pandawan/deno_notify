@@ -1,9 +1,27 @@
+import { opSync, unwrapResponse } from "./plugin.ts";
+
 type PlatformFeature<Platform extends boolean, FunctionType> = Platform extends
   true ? FunctionType : never;
 
 // Resources
 // Web Notifications API: https://developer.mozilla.org/en-US/docs/Web/API/Notification
 // Notify-rust API: https://github.com/hoodie/notify-rust/blob/main/src/notification.rs
+
+type MacSoundNames =
+  | "Basso"
+  | "Frog"
+  | "Hero"
+  | "Pop"
+  | "Submarine"
+  | "Blow"
+  | "Funk"
+  | "Morse"
+  | "Purr"
+  | "Tink"
+  | "Bottle"
+  | "Glass"
+  | "Ping"
+  | "Sosumi";
 
 export class Notification<
   MacOS extends boolean = false,
@@ -21,6 +39,8 @@ export class Notification<
 
   private _title: string = "";
   private _body: string = "";
+  private _icon: string = "";
+  private _soundName: string = "";
 
   /**
    * Create a Notification.
@@ -87,17 +107,52 @@ export class Notification<
   };
 
   /**
+   * Set the `icon`.
+   * Available on Windows and Linux.
+   * 
+   * Can either be a file URL,
+   * or a common icon name, usually those in `/usr/share/icons`
+   * can all be used (or freedesktop.org names).
+   * 
+   * @param icon
+   */
+  public icon = ((icon: string) => {
+    if (this.#verifyPlatform(["linux", "windows"], "icon") === false) return;
+    this._icon = icon;
+    return this;
+  }) as PlatformFeature<Windows | Linux, (icon: string) => this>;
+
+  /**
+   * Set the `soundName` to play with the notification.
+   * 
+   * With macOS support, a list of default sounds is provided.
+   * 
+   * @param soundName
+   */
+  public soundName = (
+    soundName: MacOS extends true ? MacSoundNames : string,
+  ) => {
+    this._soundName = soundName;
+    return this;
+  };
+
+  /**
    * Display the notification to the user.
    */
   public show = () => {
-    console.log(`Show Notification`, { title: this._title, body: this._body });
-    throw new Error("TODO!");
+    console.log(
+      `Show Notification`,
+      this,
+    );
+    return unwrapResponse(
+      opSync("notify_send", this),
+    );
   };
 
   /**
    * Clone the notification into a separate instance, maintaining all the properties.
    * 
-   * @returns The new notification.
+   * @returns The new notification instance.
    */
   public clone = () => {
     return Object.assign(
@@ -106,42 +161,43 @@ export class Notification<
     ) as Notification<MacOS, Windows, Linux>;
   };
 
-  public someMacFeature: PlatformFeature<MacOS, () => number> = (() => {
-    if (this.#verifyPlatform("macos") === false) return;
-
-    console.log("Platform is macos");
-    return 0;
-  }) as PlatformFeature<MacOS, () => number>;
-
-  public someWindowsFeature: PlatformFeature<Windows, () => number> = (() => {
-    if (this.#verifyPlatform("windows") === false) return;
-
-    console.log("Platform is windows");
-    return 0;
-  }) as PlatformFeature<Windows, () => number>;
-
   /**
    * Verify whether a feature meant for a given platform should be run on the current platform.
    * 
-   * @param isPlatform The requested platform to verify against the current platform.
+   * @param requestedPlatforms The requested platform to verify against the current platform.
    * @throws If the platform is not supported by the notification instance.
    * @throws If the feature should not be run (while in strict mode).
    * @returns True if the feature should be run, false if the feature should not be run (while in non-strict mode).
    */
-  #verifyPlatform = (isPlatform: "macos" | "windows" | "linux") => {
-    const errorMessage =
-      `${isPlatform} platform feature is not supported on ${Deno.build.os}.`;
+  #verifyPlatform = (
+    requestedPlatforms: ("macos" | "linux" | "windows")[],
+    featureName: string,
+  ) => {
+    const currentPlatform = Deno.build.os === "darwin"
+      ? "macos"
+      : Deno.build.os;
 
-    // If the requested platform is not supported by this Notification instance, throw an error
-    if (this.supports[isPlatform] === false) {
-      throw new Error(errorMessage);
+    // List of platforms that are supported by the notification instance
+    const supportedPlatforms = requestedPlatforms.filter((platform) =>
+      this.supports[platform]
+    );
+
+    // If the requested platforms are not supported by this Notification instance, throw an error
+    if (supportedPlatforms.length === 0) {
+      const unsupportedPlatforms = requestedPlatforms.filter((platform) =>
+        this.supports[platform] === false
+      );
+      throw new Error(
+        `Notification instance does not explicitly support ${
+          unsupportedPlatforms.join(", ")
+        }.`,
+      );
     }
 
-    // Whether or not the requested platform is the current platform
-    const isPlatformValid = (
-      (Deno.build.os === isPlatform) ||
-      (Deno.build.os == "darwin" && isPlatform == "macos")
-    );
+    // Whether or not the oen of the requested & supported platform is the current platform
+    const isPlatformValid = supportedPlatforms.some((platform) => (
+      currentPlatform === platform
+    ));
 
     // If we're not strictly checking for support, just return whether or not the platform is valid
     if (this.strictSupport === false) {
@@ -151,7 +207,9 @@ export class Notification<
 
     // If we are strictly checking for support, and the platform is not valid, throw an error
     if (isPlatformValid === false) {
-      throw new Error(errorMessage);
+      throw new Error(
+        `Current operating system (${currentPlatform}) does not support ${featureName}.`,
+      );
     }
     // Otherwise, we are strictly checking for support AND the platform is valid
     return true;
