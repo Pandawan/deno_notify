@@ -8,7 +8,7 @@
 Send desktop notifications on all platforms in Deno.  
 Supports Windows, macOS, and linux using [notify-rust](https://github.com/hoodie/notify-rust) though some features are platform-specific.
 
-Note: More features are in the works and the API may change as a result, but the module can already be considered as working.
+**Note: Deno is [phasing out support for plugins in version 1.12](https://github.com/denoland/deno/pull/10908), as a result this library may not work on recent releases of Deno. I will look for ways to support newer versions but cannot guarantee it.**
 
 ## Usage
 
