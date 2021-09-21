@@ -1,4 +1,4 @@
-import { opSync, unwrapResponse } from "./plugin.ts";
+import { Plug } from "./deps.ts";
 
 type PlatformFeature<Platform extends boolean, FunctionType> = Platform extends
   true ? FunctionType : never;
@@ -37,29 +37,29 @@ export class Notification<
    */
   private strictSupport: boolean;
 
-  private _title: string = "";
-  private _body: string = "";
-  private _icon: string = "";
-  private _soundName: string = "";
+  private _title: string | null = null;
+  private _body: string | null = null;
+  private _icon: string | null = null;
+  private _soundName: string | null = null;
 
   /**
    * Create a Notification.
    * Most fields are empty by default.
-   * 
+   *
    * Platform specific-features are locked behind the `supports` parameter.
-   * 
+   *
    * @param supports Which platform-specific features to support in this notification.
    * @param strictSupport Whether or not to error if a feature is called on an operating system that does not support it.
-   * 
+   *
    * @example
    * ```ts
    * // By default, no platform-specific features are allowed
    * const n1 = new Notification();
-   * 
+   *
    * // Allow macos-specific features
    * // This will throw if a macos-specific feature is called on non-macos platforms.
    * const n2 = new Notification({ macos: true });
-   * 
+   *
    * // Allow macos-specific features, ignore the features on non-macos platforms.
    * const n3 = new Notification({ macos: true }, false);
    * ```
@@ -82,10 +82,11 @@ export class Notification<
 
   /**
    * Set the `title`.
-   * 
+   * This is a required field.
+   *
    * For more elaborate content, use the `body` field.
-   * 
-   * @param title 
+   *
+   * @param title
    */
   public title = (title: string) => {
     this._title = title;
@@ -94,12 +95,12 @@ export class Notification<
 
   /**
    * Set the `body`.
-   * 
+   *
    * Multiline textual content of the notification.
    * Each line should be treated as a paragraph.
    * Simple html markup may be supported on some platforms.
-   * 
-   * @param body 
+   *
+   * @param body
    */
   public body = (body: string) => {
     this._body = body;
@@ -109,11 +110,11 @@ export class Notification<
   /**
    * Set the `icon`.
    * Available on Windows and Linux.
-   * 
+   *
    * Can either be a file URL,
    * or a common icon name, usually those in `/usr/share/icons`
    * can all be used (or freedesktop.org names).
-   * 
+   *
    * @param icon
    */
   public icon = ((icon: string) => {
@@ -124,9 +125,9 @@ export class Notification<
 
   /**
    * Set the `soundName` to play with the notification.
-   * 
+   *
    * With macOS support, a list of default sounds is provided.
-   * 
+   *
    * @param soundName
    */
   public soundName = (
@@ -140,18 +141,24 @@ export class Notification<
    * Display the notification to the user.
    */
   public show = () => {
+    const json = JSON.stringify(this);
     console.log(
       `Show Notification`,
-      this,
+      json,
     );
-    return unwrapResponse(
-      opSync("notify_send", this),
-    );
+
+    // Check has minimum requirements to be sent
+    if (this.#verifyCanBeSent() !== true) return;
+
+    throw new Error("Not yet implemented");
+
+    // TODO: Return type of notify_send
+    Plug.core.opSync("notify_send", json);
   };
 
   /**
    * Clone the notification into a separate instance, maintaining all the properties.
-   * 
+   *
    * @returns The new notification instance.
    */
   public clone = () => {
@@ -162,8 +169,22 @@ export class Notification<
   };
 
   /**
+   * Verify whether or not the notification has the minimum required fields to be sent.
+   *
+   * @throws If the notification cannot be sent with the appropriate explanation error.
+   * @returns True if the notification can be sent.
+   */
+  #verifyCanBeSent = () => {
+    // Notification NEEDS at least a title
+    if (this._title === null) {
+      throw new Error(`Notification instance must have a title.`);
+    }
+    return true;
+  };
+
+  /**
    * Verify whether a feature meant for a given platform should be run on the current platform.
-   * 
+   *
    * @param requestedPlatforms The requested platform to verify against the current platform.
    * @throws If the platform is not supported by the notification instance.
    * @throws If the feature should not be run (while in strict mode).
@@ -189,7 +210,7 @@ export class Notification<
       );
       throw new Error(
         `Notification instance does not explicitly support ${
-          unsupportedPlatforms.join(", ")
+          unsupportedPlatforms.join(", or ")
         }.`,
       );
     }
