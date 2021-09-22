@@ -38,6 +38,7 @@ export class Notification<
   private strictSupport: boolean;
 
   private _title: string | null = null;
+  private _subtitle: string | null = null;
   private _body: string | null = null;
   private _icon: string | null = null;
   private _soundName: string | null = null;
@@ -94,6 +95,20 @@ export class Notification<
   };
 
   /**
+   * Set the `subtitle`.
+   * Available on macOS.
+   *
+   * For more elaborate content, use the `body` field.
+   *
+   * @param subtitle
+   */
+  public subtitle = ((subtitle: string) => {
+    if (this.#verifyPlatform(["macos"], "subtitle") === false) return;
+    this._subtitle = subtitle;
+    return this;
+  }) as PlatformFeature<MacOS, (subtitle: string) => this>;
+
+  /**
    * Set the `body`.
    *
    * Multiline textual content of the notification.
@@ -141,16 +156,16 @@ export class Notification<
    * Display the notification to the user.
    */
   public show = () => {
+    // Check has minimum requirements to be sent
+    if (this.#verifyCanBeSent() !== true) return;
+
     const json = JSON.stringify(this);
     console.log(
       `Show Notification`,
       json,
     );
 
-    // Check has minimum requirements to be sent
-    if (this.#verifyCanBeSent() !== true) return;
-
-    throw new Error("Not yet implemented");
+    throw new Error("Displaying notifications is not yet implemented.");
 
     // TODO: Return type of notify_send
     Plug.core.opSync("notify_send", json);

@@ -7,6 +7,9 @@ struct NotificationOptions {
     //#[serde(rename = "_title")]
     title: String,
 
+    //#[serde(rename = "_subtitle")]
+    subtitle: Option<String>,
+
     //#[serde(rename = "_body")]
     body: Option<String>,
 
@@ -23,6 +26,11 @@ fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError
     // Notification title
     notification.summary(&options.title);
 
+    // Notification subtitle
+    if let Some(subtitle) = &options.subtitle {
+        notification.subtitle(subtitle);
+    }
+
     // Notification body
     if let Some(body) = &options.body {
         notification.body(body);
@@ -38,6 +46,7 @@ fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError
         notification.sound_name(sound_name);
     }
 
+    // Display it
     match notification.show() {
         Ok(_) => Ok(()),
         Err(error) => Err(error),

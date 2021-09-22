@@ -8,5 +8,8 @@
   },
   "[rust]": {
     "editor.tabSize": 4
+  },
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true
   }
 }
