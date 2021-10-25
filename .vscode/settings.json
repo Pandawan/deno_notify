@@ -1,5 +1,15 @@
 {
-    "deno.enable": true,
-    "deno.unstable": true,
-    "editor.tabSize": 2
+  "deno.enable": true,
+  "deno.unstable": true,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[rust]": {
+    "editor.tabSize": 4
+  },
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true
+  }
 }

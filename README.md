@@ -2,72 +2,77 @@
 
 [![license](https://img.shields.io/github/license/Pandawan/deno_notify)](https://github.com/Pandawan/deno_notify/blob/master/LICENSE)
 [![build](https://img.shields.io/github/workflow/status/Pandawan/deno_notify/Build)](https://github.com/Pandawan/deno_notify/actions)
-[![deno version](https://img.shields.io/badge/deno-1.8.3-success)](https://github.com/denoland/deno)
+[![deno version](https://img.shields.io/badge/deno-1.15.2-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/deno_notify/ts/mod.ts)
 
 Send desktop notifications on all platforms in Deno.  
 Supports Windows, macOS, and linux using [notify-rust](https://github.com/hoodie/notify-rust) though some features are platform-specific.
 
-**Note: Deno is [phasing out support for plugins in version 1.12](https://github.com/denoland/deno/pull/10908), as a result this library may not work on recent releases of Deno. I will look for ways to support newer versions but cannot guarantee it.**
+Note: More features are in the works and the API may change as a result.
 
 ## Usage
 
-A `prepared.ts` entrypoint is provided which uses [deno-plugin-prepare](https://github.com/manyuanrong/deno-plugin-prepare) internally so you don't have to download or open the plugin manually.
+The `mod.ts` entrypoint uses [Plug](https://github.com/denosaurs/plug) internally so you don't have to download or open the plugin manually.
 
-*You will need to run using the `--unstable` and `--allow-all` permissions to allow for automatic plugin loading and caching.*
+_You will need to run using the `--unstable` and `--allow-all` permissions to allow for automatic plugin loading and caching._
 
 ```ts
-import { notify } from 'https://deno.land/x/deno_notify@0.4.5/ts/prepared.ts';
+import { Notification } from "https://deno.land/x/deno_notify@1.0.0/ts/mod.ts";
 
-// Pass a simple message string
-notify('My message');
+// Create a new notification
+const notif = new Notification();
 
-// Pass an options object (See mod.ts's NotifyOptions)
-notify({
-  title: 'A nice title',
-  message: 'My message',
-  icon: {
-    app: "Terminal",
-  },
-  sound: "Basso",
-});
+// Add a simple message
+notif.title('My message');
+
+// Display it
+notif.show();
 ```
 
-### Manual Loading
+### Platform-Specific Features
 
-If you prefer to handle the plugin loading manually, you can do so by using the `mod.ts` entrypoint.
-Make sure you [download](https://github.com/Pandawan/deno_notify/releases/tag/0.4.5) the correct plugin for your operating system.
-
-*Because plugin loading is handled manually, you only need the `--unstable` and `--allow-plugin` permissions.*
+By default, only cross-platform features are available. In order to enable platform-specific features (e.g. icons), you can pass in booleans flags to specify the supported platforms in the `Notification`'s constructor.
 
 ```ts
-import { notify } from 'https://deno.land/x/deno_notify@0.4.5/ts/mod.ts';
+// Enable linux-specific-features
+const notif = new Notification({ linux: true });
 
-// Load the plugin manually
-Deno.openPlugin("./libdeno_notify.dylib");
+// Notification.icon() is now available
+notif.icon('/path/to/icon');
+```
 
-// Use notify the same way you would with the prepared import
-notify({ title: 'Hello', message: 'World' });
+Specifying platforms may also provide different documentation and typings for the `Notification` API. 
+
+For example, macOS has specific sound names that are available for Notifications; these are reflected in the macOS-specific Notification API.
+
+![IntelliSense Suggesting MacOS Sound Names When Calling Notification.soundName()](./images/macos_soundName_typings.png)
+
+#### Strict Platform Checking
+
+The second parameter of the `Notification`'s constructor can be used to determine whether the platform-features should be checked at runtime. When `true` (default), any platform-specific feature will error if used on a platform that does not support it. When `false`, the error will be silently ignored.
+
+Note: Platform checking is performed both at compile time (TypeScript) and at runtime.
+
+```ts
+// Icons are not supported on macOS
+// If notif.icon() is called on a macOS computer, this will error.
+const notif = new Notification({ linux: true }, true);
+notif.icon('/path/to/icon');
+
+// This will not error; however, no icon will be displayed on macOS.
+const notif = new Notification({ linux: true }, false);
+notif.icon('/path/to/icon');
 ```
 
 ## TODO
 
-- Update the rust code to use [the new op API](https://deno.land/posts/v1.4#changes-to-codedeno_corecode-rust-api)
 - Integrate my mac-notification-sys changes into notify-rust so I can add more cross-platform features.
 - Find a way to test in GH actions for Linux & Windows
-- Change API to mirror the [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/notification)
-- Find better notification API?
-  - Maybe [alerter](https://github.com/vjeantet/alerter) tho it requires a separate binary, so maybe can port that over to Rust?
 - Find out why Windows notifications only appear in action center
-- Separate API into platform-specific files (one for each platform) so TS api is nicer
-  - And export a cross-platform version that allows only cross-platform options
-  - This means TS api never lies to you, if you want cross platform you only get a subset, but if you want specific platforms to work differently, you can have your own if/else logic based on the platform you care about.
-  - On the rust side, I could also have separating logic like notify-rust to enable for more macOS-specific code (such as delivery_date which is not available in notify-rust but is available in mac-notification-sys).
 
 ## Known Issues
 
 - Many platform-specific features are not implemented
-  - I need to figure out a good way to handle platform-specific features while retaining easy to use and understand typings/documentation.
   - Features like actions, subtitle, hints, etc.
 - Custom app icons are only applied if the notification requesting it is the first one being sent on mac
   - This means an app icon cannot be changed once set, and cannot be changed even if it wasn't set in the first one.
