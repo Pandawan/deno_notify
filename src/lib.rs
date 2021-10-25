@@ -1,6 +1,6 @@
 use deno_core::serde::Deserialize;
 use deno_core::serde_json;
-use notify_rust::{Error as NotifyRustError, Notification};
+use notify_rust::{error::Error as NotifyRustError, Notification};
 
 #[derive(Debug, Deserialize)]
 struct NotificationOptions {

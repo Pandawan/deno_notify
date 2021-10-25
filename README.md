@@ -41,7 +41,7 @@ const notif = new Notification({ linux: true });
 notif.icon('/path/to/icon');
 ```
 
-Specifying platforms may also provide different documentation and typings for the `Notification` API. 
+Specifying platforms may also provide different documentation and typings for the `Notification` API.
 
 For example, macOS has specific sound names that are available for Notifications; these are reflected in the macOS-specific Notification API.
 
