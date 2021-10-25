@@ -1,22 +1,22 @@
 use deno_core::serde::Deserialize;
-use deno_core::serde_json::{self, json};
+use deno_core::serde_json;
 use notify_rust::{Error as NotifyRustError, Notification};
 
 #[derive(Debug, Deserialize)]
 struct NotificationOptions {
-    //#[serde(rename = "_title")]
+    #[serde(rename = "_title")]
     title: String,
 
-    //#[serde(rename = "_subtitle")]
+    #[serde(rename = "_subtitle")]
     subtitle: Option<String>,
 
-    //#[serde(rename = "_body")]
+    #[serde(rename = "_body")]
     body: Option<String>,
 
-    //#[serde(rename = "_icon")]
+    #[serde(rename = "_icon")]
     icon: Option<String>,
 
-    //#[serde(rename = "_soundName")]
+    #[serde(rename = "_soundName")]
     sound_name: Option<String>,
 }
 
@@ -53,20 +53,24 @@ fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError
     }
 }
 
-fn wrap_error_to_json(error: &str) -> String {
-    json!({ "error": error.to_string() }).to_string()
-}
-
-// TODO: Args & Return types are not FFI-safe
+// TODO: Return buffers are not available yet
 #[no_mangle]
-pub extern "C" fn notify_send(data: String) -> String {
-    let options: NotificationOptions = match serde_json::from_str(&data) {
+pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> u8 {
+    let buf = unsafe { std::slice::from_raw_parts(ptr, len) };
+
+    let options: NotificationOptions = match serde_json::from_slice(buf) {
         Ok(opt) => opt,
-        Err(error) => return wrap_error_to_json(&error.to_string()),
+        Err(error) => {
+            println!("Error reading input data as JSON: {}", error);
+            return 1;
+        }
     };
 
     match send_notification(options) {
-        Ok(_) => "{ ok: true }".to_string(),
-        Err(error) => wrap_error_to_json(&error.to_string()),
+        Ok(_) => 0,
+        Err(error) => {
+            println!("Error reading input data as JSON: {}", error);
+            1
+        }
     }
 }

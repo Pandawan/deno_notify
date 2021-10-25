@@ -7,8 +7,12 @@ const POLICY = Deno.env.get("PLUGIN_URL") === undefined
 const PLUGIN_URL = Deno.env.get("PLUGIN_URL") ??
   `https://github.com/Pandawan/deno_notify/releases/download/${VERSION}/`;
 
-await Plug.prepare({
+const library = await Plug.prepare({
   name: "deno_notify",
   url: PLUGIN_URL,
   policy: POLICY,
+}, {
+  notify_send: { parameters: ["buffer", "usize"], result: "u8" },
 });
+
+export { library };

@@ -50,7 +50,7 @@ jobs:
       - name: Run tests
         env:
           PLUGIN_URL: ./target/release/
-        run: deno test --unstable --allow-all tests/test.ts
+        run: deno test --unstable --allow-all tests/*.ts
 
       - name: Release Plugin
         uses: softprops/action-gh-release@master

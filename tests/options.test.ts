@@ -1,5 +1,5 @@
 import { Notification } from "../ts/notification.ts";
-import { assertStrictEquals } from "https://deno.land/std@0.107.0/testing/asserts.ts";
+import { assertStrictEquals } from "https://deno.land/std@0.112.0/testing/asserts.ts";
 
 Deno.test("Set title", () => {
   let title = "Example title";

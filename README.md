@@ -2,7 +2,7 @@
 
 [![license](https://img.shields.io/github/license/Pandawan/deno_notify)](https://github.com/Pandawan/deno_notify/blob/master/LICENSE)
 [![build](https://img.shields.io/github/workflow/status/Pandawan/deno_notify/Build)](https://github.com/Pandawan/deno_notify/actions)
-[![deno version](https://img.shields.io/badge/deno-1.15.0-success)](https://github.com/denoland/deno)
+[![deno version](https://img.shields.io/badge/deno-1.15.2-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/deno_notify/ts/mod.ts)
 
 Send desktop notifications on all platforms in Deno.  
@@ -31,23 +31,21 @@ notif.show();
 
 ### Platform-Specific Features
 
-By default, only cross-platform features are available. In order to enable platform-specific features (e.g. icons), you can pass in booleans to specify the supported platforms in the `Notification`'s constructor.
+By default, only cross-platform features are available. In order to enable platform-specific features (e.g. icons), you can pass in booleans flags to specify the supported platforms in the `Notification`'s constructor.
 
 ```ts
+// Enable linux-specific-features
 const notif = new Notification({ linux: true });
 
 // Notification.icon() is now available
 notif.icon('/path/to/icon');
 ```
 
-Specifying platforms may also provide different documentation and typings for the `Notification` API.
+Specifying platforms may also provide different documentation and typings for the `Notification` API. 
 
-```ts
-const notif = new Notification({ macos: true });
+For example, macOS has specific sound names that are available for Notifications; these are reflected in the macOS-specific Notification API.
 
-// On macOS, a list of accepted sound names are given in the parameter type.
-notif.soundName('Basso');
-```
+![IntelliSense Suggesting MacOS Sound Names When Calling Notification.soundName()](./images/macos_soundName_typings.png)
 
 #### Strict Platform Checking
 
@@ -56,11 +54,12 @@ The second parameter of the `Notification`'s constructor can be used to determin
 Note: Platform checking is performed both at compile time (TypeScript) and at runtime.
 
 ```ts
+// Icons are not supported on macOS
 // If notif.icon() is called on a macOS computer, this will error.
 const notif = new Notification({ linux: true }, true);
 notif.icon('/path/to/icon');
 
-// This will not error; However, no icon will be displayed.
+// This will not error; however, no icon will be displayed on macOS.
 const notif = new Notification({ linux: true }, false);
 notif.icon('/path/to/icon');
 ```

@@ -1,4 +1,4 @@
-import { Plug } from "./deps.ts";
+import { library } from "./plugin.ts";
 
 type PlatformFeature<Platform extends boolean, FunctionType> = Platform extends
   true ? FunctionType : never;
@@ -160,15 +160,11 @@ export class Notification<
     if (this.#verifyCanBeSent() !== true) return;
 
     const json = JSON.stringify(this);
-    console.log(
-      `Show Notification`,
-      json,
-    );
-
-    throw new Error("Displaying notifications is not yet implemented.");
-
-    // TODO: Return type of notify_send
-    Plug.core.opSync("notify_send", json);
+    const encodedJson = new TextEncoder().encode(json);
+    return library.symbols.notify_send(
+      encodedJson,
+      encodedJson.length,
+    ) as number;
   };
 
   /**

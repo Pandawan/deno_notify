@@ -20,4 +20,4 @@ elif [[ $1 != "online" ]];  then
     export PLUGIN_URL=./target/debug/
 fi
 
-deno test --unstable --allow-all tests/test.ts
+deno test --unstable --allow-all tests/*.ts
