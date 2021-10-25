@@ -47,10 +47,17 @@ jobs:
       - name: Build
         run: cargo build --verbose --release --locked
 
-      - name: Run tests
+      - name: Run tests (unix)
+        if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
         env:
           PLUGIN_URL: ./target/release/
-        run: deno test --unstable --allow-all tests/*.ts
+        run: deno test --unstable --allow-all ./tests/*.ts
+      - name: Run tests (windows)
+        if: startsWith(matrix.os, 'windows')
+        env:
+          PLUGIN_URL: ./target/release/
+        shell: bash
+        run: deno test --unstable --allow-all ./tests/*.ts
 
       - name: Release Plugin
         uses: softprops/action-gh-release@master
