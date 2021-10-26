@@ -11,13 +11,13 @@ set -e
 if [[ $1 = "release" ]];  then
     cargo build -p deno_notify --release
 
-    export PLUGIN_URL=./target/release/ 
+    export NOTIFY_PLUGIN_URL=./target/release/ 
 
 # Build in debug mode if not release and not online
 elif [[ $1 != "online" ]];  then
     cargo build -p deno_notify
 
-    export PLUGIN_URL=./target/debug/
+    export NOTIFY_PLUGIN_URL=./target/debug/
 fi
 
 deno test --unstable --allow-all tests/*.ts
