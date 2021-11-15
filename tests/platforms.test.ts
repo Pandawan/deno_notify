@@ -1,5 +1,5 @@
 import { Notification } from "../ts/notification.ts";
-import { assertThrows } from "https://deno.land/std@0.112.0/testing/asserts.ts";
+import { assertThrows } from "https://deno.land/std@0.114.0/testing/asserts.ts";
 
 Deno.test("Attempt unsupported platform feature (strict)", () => {
   const notif = new Notification();
@@ -24,7 +24,7 @@ Deno.test({
   ignore: Deno.build.os !== "windows",
   fn() {
     const notif = new Notification({ windows: true });
-    (notif as any).icon("/path/to/icon");
+    (notif as any).subtitle("Example subtitle");
   },
 });
 
@@ -41,7 +41,7 @@ Deno.test({
   name: "Attempt supported platform feature on invalid os (strict, macos)",
   ignore: Deno.build.os !== "darwin",
   fn() {
-    const notif = new Notification({ linux: true, windows: true });
+    const notif = new Notification({ linux: true });
     assertThrows(
       () => (notif as any).icon("/path/to/icon"),
       Error,
@@ -51,15 +51,27 @@ Deno.test({
 });
 
 Deno.test({
-  name:
-    "Attempt supported platform feature on invalid os (strict, windows & linux)",
-  ignore: Deno.build.os !== "windows" && Deno.build.os !== "linux",
+  name: "Attempt supported platform feature on invalid os (strict, windows)",
+  ignore: Deno.build.os !== "windows",
   fn() {
-    const notif = new Notification({ macos: true });
+    const notif = new Notification({ linux: true });
+    assertThrows(
+      () => (notif as any).icon("/path/to/icon"),
+      Error,
+      `Current operating system (windows) does not support icon.`,
+    );
+  },
+});
+
+Deno.test({
+  name: "Attempt supported platform feature on invalid os (strict, linux)",
+  ignore: Deno.build.os !== "linux",
+  fn() {
+    const notif = new Notification({ macos: true, windows: true });
     assertThrows(
       () => (notif as any).subtitle("Example subtitle"),
       Error,
-      `Current operating system (${Deno.build.os}) does not support subtitle.`,
+      `Current operating system (linux) does not support subtitle.`,
     );
   },
 });
@@ -79,6 +91,7 @@ Deno.test({
   ignore: Deno.build.os === "darwin",
   fn() {
     const notif = new Notification({ macos: true }, false);
+    // Show not throw on windows/linux
     (notif as any).subtitle("Example subtitle");
   },
 });
@@ -89,15 +102,15 @@ Deno.test({
   fn() {
     const notif = new Notification({ windows: true }, false);
     // Should not throw on linux/macos
-    (notif as any).icon("/path/to/icon");
+    (notif as any).subtitle("Example subtitle");
   },
 });
 
 Deno.test({
-  name: "Attempt supported multi-platform feature (strict, windows and linux)",
-  ignore: Deno.build.os !== "windows" && Deno.build.os !== "linux",
+  name: "Attempt supported multi-platform feature (strict, windows and macos)",
+  ignore: Deno.build.os !== "windows" && Deno.build.os !== "darwin",
   fn() {
-    const notif = new Notification({ windows: true, linux: true });
-    (notif as any).icon("/path/to/icon");
+    const notif = new Notification({ windows: true, macos: true });
+    (notif as any).subtitle("Example subtitle");
   },
 });

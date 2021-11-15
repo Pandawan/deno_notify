@@ -1,6 +1,24 @@
 use deno_core::serde::Deserialize;
 use deno_core::serde_json;
-use notify_rust::{error::Error as NotifyRustError, Notification};
+use notify_rust::{self, error::Error as NotifyRustError, Notification};
+
+#[derive(Debug, Deserialize)]
+#[serde(tag = "type")]
+enum NotificationTimeout {
+    /// Do not expire, user will have to close this manually.
+    Never,
+    /// Expire after n milliseconds.
+    Milliseconds(u32),
+}
+
+impl Into<notify_rust::Timeout> for NotificationTimeout {
+    fn into(self) -> notify_rust::Timeout {
+        match self {
+            NotificationTimeout::Never => notify_rust::Timeout::Never,
+            NotificationTimeout::Milliseconds(t) => notify_rust::Timeout::Milliseconds(t),
+        }
+    }
+}
 
 #[derive(Debug, Deserialize)]
 struct NotificationOptions {
@@ -18,32 +36,35 @@ struct NotificationOptions {
 
     #[serde(rename = "_soundName")]
     sound_name: Option<String>,
+
+    #[serde(rename = "_timeout")]
+    timeout: Option<NotificationTimeout>,
 }
 
 fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError> {
     let mut notification = Notification::new();
 
-    // Notification title
+    // Set Notification options
     notification.summary(&options.title);
 
-    // Notification subtitle
     if let Some(subtitle) = &options.subtitle {
         notification.subtitle(subtitle);
     }
 
-    // Notification body
     if let Some(body) = &options.body {
         notification.body(body);
     }
 
-    // Add an icon
     if let Some(icon) = &options.icon {
         notification.icon(icon);
     }
 
-    // Add a sound
     if let Some(sound_name) = &options.sound_name {
         notification.sound_name(sound_name);
+    }
+
+    if let Some(timeout) = options.timeout {
+        notification.timeout(timeout);
     }
 
     // Display it
@@ -58,6 +79,7 @@ fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError
 pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> u8 {
     let buf = unsafe { std::slice::from_raw_parts(ptr, len) };
 
+    // Try parsing JSON into NotificationOptions object
     let options: NotificationOptions = match serde_json::from_slice(buf) {
         Ok(opt) => opt,
         Err(error) => {
@@ -66,10 +88,11 @@ pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> u8 {
         }
     };
 
+    // Try sending the notification
     match send_notification(options) {
         Ok(_) => 0,
         Err(error) => {
-            println!("Error reading input data as JSON: {}", error);
+            println!("Error sending notification: {}", error);
             1
         }
     }

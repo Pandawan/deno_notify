@@ -1,3 +1,4 @@
 /target
 .deno_plugins
 .DS_STORE
+.vscode

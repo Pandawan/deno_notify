@@ -42,6 +42,7 @@ export class Notification<
   private _body: string | null = null;
   private _icon: string | null = null;
   private _soundName: string | null = null;
+  private _timeout: "never" | number | null = null;
 
   /**
    * Create a Notification.
@@ -96,17 +97,19 @@ export class Notification<
 
   /**
    * Set the `subtitle`.
-   * Available on macOS.
+   * Available on macOS and Windows.
    *
    * For more elaborate content, use the `body` field.
    *
    * @param subtitle
    */
   public subtitle = ((subtitle: string) => {
-    if (this.#verifyPlatform(["macos"], "subtitle") === false) return;
+    if (this.#verifyPlatform(["macos", "windows"], "subtitle") === false) {
+      return;
+    }
     this._subtitle = subtitle;
     return this;
-  }) as PlatformFeature<MacOS, (subtitle: string) => this>;
+  }) as PlatformFeature<MacOS | Windows, (subtitle: string) => this>;
 
   /**
    * Set the `body`.
@@ -124,24 +127,24 @@ export class Notification<
 
   /**
    * Set the `icon`.
-   * Available on Windows and Linux.
+   * Available on Linux.
    *
-   * Can either be a file URL,
+   * Can either be a file:// URI,
    * or a common icon name, usually those in `/usr/share/icons`
    * can all be used (or freedesktop.org names).
    *
    * @param icon
    */
   public icon = ((icon: string) => {
-    if (this.#verifyPlatform(["linux", "windows"], "icon") === false) return;
+    if (this.#verifyPlatform(["linux"], "icon") === false) return;
     this._icon = icon;
     return this;
-  }) as PlatformFeature<Windows | Linux, (icon: string) => this>;
+  }) as PlatformFeature<Linux, (icon: string) => this>;
 
   /**
    * Set the `soundName` to play with the notification.
    *
-   * With macOS support, a list of default sounds is provided.
+   * With macOS support, a list of default sound names is provided.
    *
    * @param soundName
    */
@@ -151,6 +154,31 @@ export class Notification<
     this._soundName = soundName;
     return this;
   };
+
+  /**
+   * Set the `timeout`.
+   * Available on Windows and Linux.
+   *
+   * This sets the time (in milliseconds) from the time the notification is displayed
+   * until it is closed again by the Notification Server.
+   *
+   * Setting this to `'never'` will cause the notification to never expire.
+   *
+   * @param timeout
+   */
+  public timeout = ((timeout: "never" | number) => {
+    if (this.#verifyPlatform(["windows", "linux"], "timeout") === false) return;
+
+    // TODO: Once TypeScript 4.5 comes out, add compile-time check for numbers greater than 0 (see https://stackoverflow.com/a/69090186/4588880)
+    if (typeof timeout === "number" && timeout <= 0) {
+      throw new Error(
+        "Notification timeout must be a number greater than 0 (or 'never').",
+      );
+    }
+
+    this._timeout = timeout;
+    return this;
+  }) as PlatformFeature<Windows | Linux, (timeout: "never" | number) => this>;
 
   /**
    * Display the notification to the user.
