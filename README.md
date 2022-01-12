@@ -21,7 +21,7 @@ _You will need to run using the `--unstable` and `--allow-all` permissions to
 allow for automatic plugin loading and caching._
 
 ```ts
-import { Notification } from "https://deno.land/x/deno_notify@1.1.0/ts/mod.ts";
+import { Notification } from "https://deno.land/x/deno_notify@1.1.2/ts/mod.ts";
 
 // Create a new notification
 const notif = new Notification();
