@@ -2,7 +2,7 @@ import { Notification } from "../ts/notification.ts";
 import {
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.120.0/testing/asserts.ts";
+} from "https://deno.land/std@0.122.0/testing/asserts.ts";
 
 Deno.test("Set title", () => {
   const title = "Example title";

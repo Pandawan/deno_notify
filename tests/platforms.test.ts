@@ -1,5 +1,5 @@
 import { Notification } from "../ts/notification.ts";
-import { assertThrows } from "https://deno.land/std@0.120.0/testing/asserts.ts";
+import { assertThrows } from "https://deno.land/std@0.122.0/testing/asserts.ts";
 
 Deno.test("Attempt unsupported platform feature (strict)", () => {
   const notif = new Notification();
