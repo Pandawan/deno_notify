@@ -1,4 +1,4 @@
-import { library } from "./plugin.ts";
+import { notify_send } from "./plugin.ts";
 
 type PlatformFeature<Platform extends boolean, FunctionType> = Platform extends
   true ? FunctionType : never;
@@ -182,17 +182,18 @@ export class Notification<
 
   /**
    * Display the notification to the user.
+   * @throws When an error occurs while sending the notification.
    */
   public show = () => {
     // Check has minimum requirements to be sent
     if (this.#verifyCanBeSent() !== true) return;
 
     const json = JSON.stringify(this);
-    const encodedJson = new TextEncoder().encode(json);
-    return library.symbols.notify_send(
-      encodedJson,
-      encodedJson.length,
-    ) as number;
+    const result = notify_send(json);
+
+    if (result.type === "error") {
+      throw new Error(`${result.message} (when: ${result.when})`);
+    }
   };
 
   /**

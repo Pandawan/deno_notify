@@ -74,26 +74,43 @@ fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError
     }
 }
 
-// TODO: Return buffers are not available yet
+/// Convert the given str to a buffer pointer to be returned by ffi.
+/// Inspired by https://github.com/denoland/deno_bindgen
+fn to_result_str(str: String) -> *const u8 {
+    let length = (str.len() as u32).to_be_bytes();
+    let mut v = length.to_vec();
+
+    let bytes = str.as_bytes();
+    v.extend_from_slice(bytes);
+
+    std::mem::forget(str);
+    let result = v.as_ptr();
+    // Leak the result to JS land.
+    std::mem::forget(v);
+    result
+}
+
 #[no_mangle]
-pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> u8 {
+pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> *const u8 {
     let buf = unsafe { std::slice::from_raw_parts(ptr, len) };
 
     // Try parsing JSON into NotificationOptions object
     let options: NotificationOptions = match serde_json::from_slice(buf) {
         Ok(opt) => opt,
         Err(error) => {
-            println!("Error reading input data as JSON: {}", error);
-            return 1;
+            return to_result_str(format!(
+                r#"{{"type":"error","when":"parsing_input","message":"{}"}}"#,
+                error
+            ))
         }
     };
 
     // Try sending the notification
     match send_notification(options) {
-        Ok(_) => 0,
-        Err(error) => {
-            println!("Error sending notification: {}", error);
-            1
-        }
+        Ok(_) => to_result_str(r#"{"type":"success"}"#.to_string()),
+        Err(error) => to_result_str(format!(
+            r#"{{"type":"error","when":"sending_notification","message":"{}"}}"#,
+            error
+        )),
     }
 }
