@@ -100,7 +100,7 @@ pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> *const u8 {
         Err(error) => {
             return to_result_str(format!(
                 r#"{{"type":"error","when":"parsing_input","message":"{}"}}"#,
-                error
+                error.to_string().replace("\"", "\\\"")
             ))
         }
     };
@@ -110,7 +110,7 @@ pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> *const u8 {
         Ok(_) => to_result_str(r#"{"type":"success"}"#.to_string()),
         Err(error) => to_result_str(format!(
             r#"{{"type":"error","when":"sending_notification","message":"{}"}}"#,
-            error
+            error.to_string().replace("\"", "\\\"")
         )),
     }
 }
