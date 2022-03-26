@@ -1,6 +1,6 @@
 import { Plug } from "https://deno.land/x/plug@0.5.1/mod.ts";
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const POLICY = Deno.env.get("NOTIFY_PLUGIN_URL") === undefined
   ? Plug.CachePolicy.STORE
   : Plug.CachePolicy.NONE;

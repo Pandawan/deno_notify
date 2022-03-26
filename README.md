@@ -21,7 +21,7 @@ _You will need to run using the `--unstable` and `--allow-all` permissions to
 allow for automatic plugin loading and caching._
 
 ```ts
-import { Notification } from "https://deno.land/x/deno_notify@1.2.0/ts/mod.ts";
+import { Notification } from "https://deno.land/x/deno_notify@1.3.0/ts/mod.ts";
 
 // Create a new notification
 const notif = new Notification();
@@ -38,6 +38,7 @@ Or stack together your desired options:
 ```ts
 new Notification({ macos: true })
   .title("My message")
+  .subtitle("It's very important...")
   .body("Hello, World!")
   .soundName("Basso")
   .show();
@@ -110,7 +111,7 @@ set the environment variable for this option to take effect).
 ### Known Issues
 
 - Many platform-specific features are not implemented
-  - Features like actions, subtitle, hints, etc.
+  - Features like actions, hints, etc.
   - Need to integrate new mac-notification-sys changes into notify-rust
 - Icons/app_id on macOS are not implemented because of following issues:
   - Custom app icons are only applied if the notification requesting it is the

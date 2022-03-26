@@ -8,14 +8,16 @@ enum NotificationTimeout {
     /// Do not expire, user will have to close this manually.
     Never,
     /// Expire after n milliseconds.
-    Milliseconds(u32),
+    Milliseconds { value: u32 },
 }
 
 impl Into<notify_rust::Timeout> for NotificationTimeout {
     fn into(self) -> notify_rust::Timeout {
         match self {
             NotificationTimeout::Never => notify_rust::Timeout::Never,
-            NotificationTimeout::Milliseconds(t) => notify_rust::Timeout::Milliseconds(t),
+            NotificationTimeout::Milliseconds { value } => {
+                notify_rust::Timeout::Milliseconds(value)
+            }
         }
     }
 }
@@ -41,6 +43,7 @@ struct NotificationOptions {
     timeout: Option<NotificationTimeout>,
 }
 
+/// Read the given NotificationOptions and send it as a notification.
 fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError> {
     let mut notification = Notification::new();
 
@@ -74,6 +77,21 @@ fn send_notification(options: NotificationOptions) -> Result<(), NotifyRustError
     }
 }
 
+// Set the app bundle on macos
+#[cfg(target_os = "macos")]
+fn set_bundle() {
+    use notify_rust::error::{ApplicationError, MacOsError};
+
+    match notify_rust::set_application("com.apple.Terminal") {
+        // Success
+        Ok(_) => {}
+        // If already set, ignore
+        Err(MacOsError::Application(ApplicationError::AlreadySet(_))) => {}
+        // Another error, report it (but don't fail)
+        Err(err) => eprintln!("Error setting application bundle: {}", err),
+    }
+}
+
 /// Convert the given str to a buffer pointer to be returned by ffi.
 /// Inspired by https://github.com/denoland/deno_bindgen
 fn to_result_str(str: String) -> *const u8 {
@@ -104,6 +122,10 @@ pub extern "C" fn notify_send(ptr: *const u8, len: usize) -> *const u8 {
             ))
         }
     };
+
+    // Set the app bundle (if necessary)
+    #[cfg(target_os = "macos")]
+    set_bundle();
 
     // Try sending the notification
     match send_notification(options) {

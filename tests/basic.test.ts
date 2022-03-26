@@ -3,7 +3,7 @@ import {
   assert,
   assertNotStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.130.0/testing/asserts.ts";
+} from "https://deno.land/std@0.132.0/testing/asserts.ts";
 
 Deno.test("Creating a notification", () => {
   new Notification();
@@ -32,6 +32,27 @@ Deno.test("Send basic notification", () => {
 
   // Add a simple message
   notif.title("My message");
+
+  // Display it
+  notif.show();
+});
+
+Deno.test("Send complex notification", () => {
+  // Create a new notification
+  const notif = new Notification(
+    { macos: true, windows: true, linux: true },
+    // Attempting to use all options, so silently fail on other platforms
+    false,
+  );
+
+  // Set options
+  notif
+    .title("Title")
+    .subtitle("Subtitle")
+    .body("Body")
+    .icon("utilities-terminal")
+    .soundName("Basso")
+    .timeout(10);
 
   // Display it
   notif.show();

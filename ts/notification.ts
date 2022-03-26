@@ -42,7 +42,10 @@ export class Notification<
   private _body: string | null = null;
   private _icon: string | null = null;
   private _soundName: string | null = null;
-  private _timeout: "never" | number | null = null;
+  private _timeout:
+    | { type: "Never" }
+    | { type: "Milliseconds"; value: number }
+    | null = null;
 
   /**
    * Create a Notification.
@@ -85,6 +88,7 @@ export class Notification<
   /**
    * Set the `title`.
    * This is a required field.
+   * Available on all platforms.
    *
    * For more elaborate content, use the `body` field.
    *
@@ -105,7 +109,7 @@ export class Notification<
    */
   public subtitle = ((subtitle: string) => {
     if (this.#verifyPlatform(["macos", "windows"], "subtitle") === false) {
-      return;
+      return this;
     }
     this._subtitle = subtitle;
     return this;
@@ -113,6 +117,7 @@ export class Notification<
 
   /**
    * Set the `body`.
+   * Available on all platforms.
    *
    * Multiline textual content of the notification.
    * Each line should be treated as a paragraph.
@@ -136,7 +141,7 @@ export class Notification<
    * @param icon
    */
   public icon = ((icon: string) => {
-    if (this.#verifyPlatform(["linux"], "icon") === false) return;
+    if (this.#verifyPlatform(["linux"], "icon") === false) return this;
     this._icon = icon;
     return this;
   }) as PlatformFeature<Linux, (icon: string) => this>;
@@ -167,7 +172,9 @@ export class Notification<
    * @param timeout
    */
   public timeout = ((timeout: "never" | number) => {
-    if (this.#verifyPlatform(["windows", "linux"], "timeout") === false) return;
+    // if (this.#verifyPlatform(["windows", "linux"], "timeout") === false) {
+    //   return this;
+    // }
 
     // TODO: Once TypeScript 4.5 comes out, add compile-time check for numbers greater than 0 (see https://stackoverflow.com/a/69090186/4588880)
     if (typeof timeout === "number" && timeout <= 0) {
@@ -176,12 +183,18 @@ export class Notification<
       );
     }
 
-    this._timeout = timeout;
+    if (timeout === "never") {
+      this._timeout = { type: "Never" };
+    } else if (typeof timeout === "number") {
+      this._timeout = { type: "Milliseconds", value: timeout };
+    }
+
     return this;
   }) as PlatformFeature<Windows | Linux, (timeout: "never" | number) => this>;
 
   /**
    * Display the notification to the user.
+   *
    * @throws When an error occurs while sending the notification.
    */
   public show = () => {
