@@ -48,7 +48,7 @@ jobs:
         run: cargo build --verbose --release --locked
 
       - name: Run tests (unix)
-        if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+        if: startsWith(matrix.os, 'macOS') #startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
         env:
           NOTIFY_PLUGIN_URL: ./target/release/
         run: deno test --unstable --allow-all ./tests/*.ts
