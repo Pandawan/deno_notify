@@ -3,7 +3,7 @@ import {
   assert,
   assertNotStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.132.0/testing/asserts.ts";
+} from "https://deno.land/std@0.134.0/testing/asserts.ts";
 
 Deno.test("Creating a notification", () => {
   new Notification();

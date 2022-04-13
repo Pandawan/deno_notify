@@ -1,8 +1,9 @@
 import { Notification } from "../ts/notification.ts";
 import {
+  assertEquals,
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.132.0/testing/asserts.ts";
+} from "https://deno.land/std@0.134.0/testing/asserts.ts";
 
 Deno.test("Set title", () => {
   const title = "Example title";
@@ -51,10 +52,10 @@ Deno.test({
     const notif = new Notification({ linux: true, windows: true }).timeout(
       "never",
     );
-    assertStrictEquals((notif as any)._timeout, { type: "Never" });
+    assertEquals((notif as any)._timeout, { type: "Never" });
 
     notif.timeout(10);
-    assertStrictEquals((notif as any)._timeout, {
+    assertEquals((notif as any)._timeout, {
       type: "Milliseconds",
       value: 10,
     });

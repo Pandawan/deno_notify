@@ -161,10 +161,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "deno_core"
-version = "0.126.0"
+name = "convert_case"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "600b0066549fdd29c78c8106509cd1d24bacc56ef266397bb347cafb8367f6b5"
+checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
+
+[[package]]
+name = "deno_core"
+version = "0.128.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3a8e7fc93f17d92098b3f30ab69faa1d2a38ce9ff852fadff950fbc184b697a"
 dependencies = [
  "anyhow",
  "deno_ops",
@@ -184,7 +190,7 @@ dependencies = [
 
 [[package]]
 name = "deno_notify"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "deno_core",
  "futures",
@@ -194,9 +200,9 @@ dependencies = [
 
 [[package]]
 name = "deno_ops"
-version = "0.4.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b1bf0375299ba35cef71c7530bddb6d67e8e7276226c6abc98a6986e01ddb1e"
+checksum = "781d947fda5f267052ee312e30a62bb881eb9e1e6e826bd2d2e7e7d1571fed1c"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -212,6 +218,19 @@ checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
 dependencies = [
  "proc-macro2",
  "quote",
+ "syn",
+]
+
+[[package]]
+name = "derive_more"
+version = "0.99.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fb810d30a7c1953f91334de7244731fc3f3c10d7fe163338a35b9f640960321"
+dependencies = [
+ "convert_case",
+ "proc-macro2",
+ "quote",
+ "rustc_version",
  "syn",
 ]
 
@@ -484,9 +503,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.112"
+version = "0.2.123"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b03d17f364a3a042d5e5d46b053bbbf82c92c9430c592dd4c064dc6ee997125"
+checksum = "cb691a747a7ab48abc15c5b42066eaafde10dc427e3b6ee2a1cf43db04c763bd"
 
 [[package]]
 name = "lock_api"
@@ -814,6 +833,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
 
 [[package]]
+name = "rustc_version"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfa0f585226d2e68097d4f95d113b15b83a82e819ab25717ec0590d9584ef366"
+dependencies = [
+ "semver",
+]
+
+[[package]]
 name = "ryu"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -824,6 +852,12 @@ name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
+name = "semver"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d65bd28f48be7196d222d95b9243287f48d27aca604e08497513019ff0502cc4"
 
 [[package]]
 name = "serde"
@@ -879,10 +913,11 @@ dependencies = [
 
 [[package]]
 name = "serde_v8"
-version = "0.37.0"
+version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c83878134590f4d50ceb03f257dbd01646ffe675e8022bcd980365c3f20028d5"
+checksum = "28b4c34d1cb3911353d264bbbbf508ddfe9c59cd1b69672897816b2d8c571c3b"
 dependencies = [
+ "derive_more",
  "serde",
  "serde_bytes",
  "v8",
