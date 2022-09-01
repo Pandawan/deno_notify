@@ -12,7 +12,7 @@ const library = await Plug.prepare({
   url: NOTIFY_PLUGIN_URL,
   policy: POLICY,
 }, {
-  notify_send: { parameters: ["pointer", "usize"], result: "pointer" },
+  notify_send: { parameters: ["buffer", "usize"], result: "buffer" },
 });
 
 function readPointer(v: any): Uint8Array {
