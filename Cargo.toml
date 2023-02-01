@@ -1,6 +1,6 @@
 [package]
 name = "deno_notify"
-version = "1.3.1"
+version = "1.4.0"
 authors = ["Pandawan <pandawanfr@gmail.com>"]
 edition = "2021"
 publish = false
@@ -11,7 +11,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-futures = "0.3.21"
-deno_core = "0.128.0"
-notify-rust = "4.5.8"
-serde = "1.0.136"
+futures = "0.3.25"
+deno_core = "0.167.0"
+notify-rust = "4.7.0"
+serde = "1.0.149"
