@@ -8,22 +8,26 @@
 set -e
 
 # Build in release mode if needed
-if [[ $1 = "release" ]];  then
+if [ $1 = "release" ];  then
     cargo build -p deno_notify --release
+
+    is_local=true
 
     export NOTIFY_PLUGIN_URL=./target/release
 
 # Build in debug mode if not release and not online
-elif [[ $1 != "online" ]];  then
+elif [ $1 != "online" ];  then
     cargo build -p deno_notify
+
+    is_local=false
 
     export NOTIFY_PLUGIN_URL=./target/debug
 fi
 
 # Rename to the architecture-specific name of the library
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [ $is_local == true] && ["$OSTYPE" == "darwin"* ]; then
     arch=$(uname -m)
-    if [[ "$arch" == "arm64" ]]; then
+    if [ "$arch" == "arm64" ]; then
         arch="aarch64"
     fi
 

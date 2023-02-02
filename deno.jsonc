@@ -10,7 +10,8 @@
     "run:debug": "export NOTIFY_PLUGIN_URL=\"./target/debug/\" && deno run -A --unstable"
     // TODO: Wait for deno task to support glob expansions (https://github.com/denoland/deno_task_shell/issues/6)
     // "test:release": "export NOTIFY_PLUGIN_URL=\"./target/release/\" && deno test -A --unstable tests/*.ts",
-    // "test:debug": "export NOTIFY_PLUGIN_URL=\"./target/debug/\" && deno test -A --unstable tests/*.ts"
+    // "test:debug": "export NOTIFY_PLUGIN_URL=\"./target/debug/\" && deno test -A --unstable tests/*.ts",
+    // "test:doc": "deno test -A --unstable --doc",
   },
   "fmt": {
     "files": {
