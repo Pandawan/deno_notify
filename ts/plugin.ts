@@ -1,6 +1,6 @@
 import { CacheSetting, dlopen } from "https://deno.land/x/plug@1.0.0/mod.ts";
 
-const VERSION = "1.4.0";
+const VERSION = "1.4.1";
 const CACHE_POLICY: CacheSetting =
   Deno.env.get("NOTIFY_PLUGIN_URL") === undefined ? "use" : "reloadAll";
 const NOTIFY_PLUGIN_URL = Deno.env.get("NOTIFY_PLUGIN_URL") ??

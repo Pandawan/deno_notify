@@ -227,7 +227,7 @@ dependencies = [
 
 [[package]]
 name = "deno_notify"
-version = "1.4.0"
+version = "1.4.1"
 dependencies = [
  "deno_core",
  "futures",
