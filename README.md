@@ -1,7 +1,7 @@
 # deno_notify
 
 [![license](https://img.shields.io/github/license/Pandawan/deno_notify)](https://github.com/Pandawan/deno_notify/blob/master/LICENSE)
-[![build](https://img.shields.io/github/workflow/status/Pandawan/deno_notify/Build)](https://github.com/Pandawan/deno_notify/actions)
+[![build](https://img.shields.io/github/workflow/status/Pandawan/deno_notify/.github/workflows/build.yml?branch=main)](https://github.com/Pandawan/deno_notify/actions/workflows/build.yml)
 [![deno version](https://img.shields.io/badge/deno-1.25.0-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/deno_notify/ts/mod.ts)
 

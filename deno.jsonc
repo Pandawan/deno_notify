@@ -1,4 +1,17 @@
 {
+  "tasks": {
+    "check": "deno check --unstable ./ts/mod.ts",
+    "fmt": "deno fmt --unstable",
+    "fmt:check": "deno fmt --unstable --check",
+    "lint": "deno lint --unstable",
+    "build:release": "cargo build --verbose --release --locked",
+    "build:debug": "cargo build",
+    "run:release": "export NOTIFY_PLUGIN_URL=\"./target/release/\" && deno run -A --unstable",
+    "run:debug": "export NOTIFY_PLUGIN_URL=\"./target/debug/\" && deno run -A --unstable"
+    // TODO: Wait for deno task to support glob expansions (https://github.com/denoland/deno_task_shell/issues/6)
+    // "test:release": "export NOTIFY_PLUGIN_URL=\"./target/release/\" && deno test -A --unstable tests/*.ts",
+    // "test:debug": "export NOTIFY_PLUGIN_URL=\"./target/debug/\" && deno test -A --unstable tests/*.ts"
+  },
   "fmt": {
     "files": {
       "exclude": ["target"]

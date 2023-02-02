@@ -10,10 +10,14 @@ const library = await dlopen({
   name: "deno_notify",
   url: NOTIFY_PLUGIN_URL,
   cache: CACHE_POLICY,
+  suffixes: {
+    darwin: `.${Deno.build.arch}`,
+  },
 }, {
   notify_send: { parameters: ["buffer", "usize"], result: "buffer" },
 });
 
+// TODO: Check out https://github.com/webview/webview_deno/blob/main/src/ffi.ts
 function readPointer(v: Deno.PointerValue): Uint8Array {
   const ptr = new Deno.UnsafePointerView(v);
   const lengthBe = new Uint8Array(4);

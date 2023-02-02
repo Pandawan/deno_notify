@@ -8,35 +8,54 @@ on:
       - "src/**"
       - "ts/**"
       - ".github/workflows/**"
-
-env:
-  CARGO_TERM_COLOR: always
+      - "deno.jsonc"
 
 jobs:
   build:
     name: ${{ matrix.kind }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 30
     strategy:
       matrix:
         os: [macOS-latest, ubuntu-latest, windows-latest]
 
     env:
       GH_ACTIONS: true
+      CARGO_TERM_COLOR: always
       RUST_BACKTRACE: full
+      DENO_BUILD_MODE: release
 
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup deno
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
 
+      # TODO: Replace this with actions-rs
+      - name: Setup rust
+        # When rustup is updated, it tries to replace its binary, which on Windows is somehow locked.
+        # This can result in the CI failure, see: https://github.com/rust-lang/rustup/issues/3029
+        run: |
+          rustup set auto-self-update disable
+          rustup toolchain install stable --profile minimal
+
+      - name: Install x86_64 AND aarch64 targets (mac)
+        if: matrix.os == 'macOS-latest'
+        run: |
+          rustup target install x86_64-apple-darwin
+          rustup target install aarch64-apple-darwin
+
+      - name: Setup rust-cache
+        uses: Swatinem/rust-cache@v2.2.0
+
       - name: Install required build packages (linux)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get install libdbus-1-dev pkg-config libdbus-1-3
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install libdbus-1-dev pkg-config libdbus-1-3
 
       - name: Log versions
         run: |
@@ -44,19 +63,25 @@ jobs:
           rustc --version
           cargo --version
 
-      - name: Build
-        run: cargo build --verbose --release --locked
+      - name: Build (linux, windows)
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest'
+        run: deno task build:release
 
-      - name: Run tests (unix)
-        if: startsWith(matrix.os, 'macOS') #startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
-        env:
-          NOTIFY_PLUGIN_URL: ./target/release/
-        run: deno test --unstable --allow-all ./tests/*.ts
-      # - name: Run tests (windows)
-      #   if: startsWith(matrix.os, 'windows')
+      - name: Build (macos x86_64)
+        if: matrix.os == 'macOS-latest'
+        run: |
+          deno task build:release --target x86_64-apple-darwin
+          cp ./target/x86_64-apple-darwin/release/libdeno_notify.dylib ./target/x86_64-apple-darwin/release/libdeno_notify.x86_64.dylib
+
+      - name: Build (macos aarch64)
+        if: matrix.os == 'macOS-latest'
+        run: |
+          deno task build:release --target aarch64-apple-darwin
+          cp ./target/aarch64-apple-darwin/release/libdeno_notify.dylib ./target/aarch64-apple-darwin/release/libdeno_notify.aarch64.dylib
+
+      # - name: Run tests
       #   env:
       #     NOTIFY_PLUGIN_URL: ./target/release/
-      #   shell: bash
       #   run: deno test --unstable --allow-all ./tests/*.ts
 
       - name: Release Plugin
@@ -67,6 +92,7 @@ jobs:
           tag_name: "deno_notify release"
           draft: true
           files: |
-            ./target/release/libdeno_notify.dylib
+            ./target/x86_64-apple-darwin/release/libdeno_notify.x86_64.dylib
+            ./target/aarch64-apple-darwin/release/libdeno_notify.aarch64.dylib
             ./target/release/libdeno_notify.so
             ./target/release/deno_notify.dll

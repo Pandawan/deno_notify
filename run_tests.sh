@@ -11,13 +11,23 @@ set -e
 if [[ $1 = "release" ]];  then
     cargo build -p deno_notify --release
 
-    export NOTIFY_PLUGIN_URL=./target/release/ 
+    export NOTIFY_PLUGIN_URL=./target/release
 
 # Build in debug mode if not release and not online
 elif [[ $1 != "online" ]];  then
     cargo build -p deno_notify
 
-    export NOTIFY_PLUGIN_URL=./target/debug/
+    export NOTIFY_PLUGIN_URL=./target/debug
+fi
+
+# Rename to the architecture-specific name of the library
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    arch=$(uname -m)
+    if [[ "$arch" == "arm64" ]]; then
+        arch="aarch64"
+    fi
+
+    cp $NOTIFY_PLUGIN_URL/libdeno_notify.dylib $NOTIFY_PLUGIN_URL/libdeno_notify.$arch.dylib
 fi
 
 deno test --unstable --allow-all tests/*.ts
