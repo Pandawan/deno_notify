@@ -7,7 +7,7 @@ type PlatformFeature<Platform extends boolean, FunctionType> = Platform extends
 // Web Notifications API: https://developer.mozilla.org/en-US/docs/Web/API/Notification
 // Notify-rust API: https://github.com/hoodie/notify-rust/blob/main/src/notification.rs
 
-type MacSoundNames =
+export type MacSoundNames =
   | "Basso"
   | "Frog"
   | "Hero"
@@ -31,11 +31,11 @@ export class Notification<
   /**
    * Which platform-specific features to support in this notification.
    */
-  private supports: { macos: MacOS; windows: Windows; linux: Linux };
+  public readonly supports: { macos: MacOS; windows: Windows; linux: Linux };
   /**
    * Whether or not to error if a feature is called on an operating system that does not support it.
    */
-  private strictSupport: boolean;
+  public readonly strictSupport: boolean;
 
   private _title: string | null = null;
   private _subtitle: string | null = null;
@@ -58,14 +58,15 @@ export class Notification<
    *
    * @example
    * ```ts
-   * // By default, no platform-specific features are allowed
+   * // By default, no platform-specific features are allowed.
    * const n1 = new Notification();
    *
-   * // Allow macos-specific features
+   * // Allow macos-specific features.
    * // This will throw if a macos-specific feature is called on non-macos platforms.
    * const n2 = new Notification({ macos: true });
    *
-   * // Allow macos-specific features, ignore the features on non-macos platforms.
+   * // Allow macos-specific features.
+   * // This will ignore macos-specific features on non-macos platforms.
    * const n3 = new Notification({ macos: true }, false);
    * ```
    */
@@ -94,7 +95,7 @@ export class Notification<
    *
    * @param title
    */
-  public title = (title: string) => {
+  public title = (title: string): this => {
     this._title = title;
     return this;
   };
@@ -107,7 +108,7 @@ export class Notification<
    *
    * @param subtitle
    */
-  public subtitle = ((subtitle: string) => {
+  public subtitle = ((subtitle: string): this => {
     if (this.#verifyPlatform(["macos", "windows"], "subtitle") === false) {
       return this;
     }
@@ -125,7 +126,7 @@ export class Notification<
    *
    * @param body
    */
-  public body = (body: string) => {
+  public body = (body: string): this => {
     this._body = body;
     return this;
   };
@@ -140,7 +141,7 @@ export class Notification<
    *
    * @param icon
    */
-  public icon = ((icon: string) => {
+  public icon = ((icon: string): this => {
     if (this.#verifyPlatform(["linux"], "icon") === false) return this;
     this._icon = icon;
     return this;
@@ -155,7 +156,7 @@ export class Notification<
    */
   public soundName = (
     soundName: MacOS extends true ? MacSoundNames : string,
-  ) => {
+  ): this => {
     this._soundName = soundName;
     return this;
   };
@@ -171,12 +172,12 @@ export class Notification<
    *
    * @param timeout
    */
-  public timeout = ((timeout: "never" | number) => {
-    // if (this.#verifyPlatform(["windows", "linux"], "timeout") === false) {
-    //   return this;
-    // }
+  public timeout = ((timeout: "never" | number): this => {
+    if (this.#verifyPlatform(["windows", "linux"], "timeout") === false) {
+      return this;
+    }
 
-    // TODO: Once TypeScript 4.5 comes out, add compile-time check for numbers greater than 0 (see https://stackoverflow.com/a/69090186/4588880)
+    // TODO: Maybe compile-time check for positive numbers (once TS supports it)
     if (typeof timeout === "number" && timeout <= 0) {
       throw new Error(
         "Notification timeout must be a number greater than 0 (or 'never').",
@@ -214,7 +215,7 @@ export class Notification<
    *
    * @returns The new notification instance.
    */
-  public clone = () => {
+  public clone = (): Notification<MacOS, Windows, Linux> => {
     return Object.assign(
       Object.create(Object.getPrototypeOf(this)),
       this,
@@ -227,7 +228,7 @@ export class Notification<
    * @throws If the notification cannot be sent with the appropriate explanation error.
    * @returns True if the notification can be sent.
    */
-  #verifyCanBeSent = () => {
+  #verifyCanBeSent = (): boolean => {
     // Notification NEEDS at least a title
     if (this._title === null) {
       throw new Error(`Notification instance must have a title.`);
@@ -246,7 +247,7 @@ export class Notification<
   #verifyPlatform = (
     requestedPlatforms: ("macos" | "linux" | "windows")[],
     featureName: string,
-  ) => {
+  ): boolean => {
     const currentPlatform = Deno.build.os === "darwin"
       ? "macos"
       : Deno.build.os;

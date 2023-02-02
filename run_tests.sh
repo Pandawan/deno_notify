@@ -7,16 +7,16 @@
 
 set -e
 
-# Build in release mode if needed
-if [ $1 = "release" ];  then
-    cargo build -p deno_notify --release
+is_local=true
 
-    is_local=true
+# Build in release mode if needed
+if [ "$1" = "release" ];  then
+    cargo build -p deno_notify --release
 
     export NOTIFY_PLUGIN_URL=./target/release
 
 # Build in debug mode if not release and not online
-elif [ $1 != "online" ];  then
+elif [ "$1" != "online" ];  then
     cargo build -p deno_notify
 
     is_local=false
@@ -25,7 +25,7 @@ elif [ $1 != "online" ];  then
 fi
 
 # Rename to the architecture-specific name of the library
-if [ $is_local == true] && ["$OSTYPE" == "darwin"* ]; then
+if [ "$is_local" = true ] && [ "$OSTYPE" = "darwin"* ]; then
     arch=$(uname -m)
     if [ "$arch" == "arm64" ]; then
         arch="aarch64"

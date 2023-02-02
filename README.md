@@ -2,7 +2,7 @@
 
 [![license](https://img.shields.io/github/license/Pandawan/deno_notify)](https://github.com/Pandawan/deno_notify/blob/master/LICENSE)
 [![build](https://img.shields.io/github/actions/workflow/status/Pandawan/deno_notify/.github/workflows/build.yml?branch=master)](https://github.com/Pandawan/deno_notify/actions/workflows/build.yml)
-[![deno version](https://img.shields.io/badge/deno-1.25.0-success)](https://github.com/denoland/deno)
+[![deno version](https://img.shields.io/badge/deno-1.30.0-success)](https://github.com/denoland/deno)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/deno_notify/ts/mod.ts)
 
 Send desktop notifications on all platforms in Deno.\
@@ -21,7 +21,7 @@ _You will need to run using the `--unstable` and `--allow-all` permissions to
 allow for automatic plugin loading and caching._
 
 ```ts
-import { Notification } from "https://deno.land/x/deno_notify@1.4.1/ts/mod.ts";
+import { Notification } from "https://deno.land/x/deno_notify@1.4.2/ts/mod.ts";
 
 // Create a new notification
 const notif = new Notification();

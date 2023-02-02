@@ -202,9 +202,9 @@ dependencies = [
 
 [[package]]
 name = "deno_core"
-version = "0.167.0"
+version = "0.168.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d9c965d57f9f0e018f344c0aaabe10348d8a7d592d622156bf380528dcd57a4"
+checksum = "9be5363b163146294f1f329b47691d7ec459540d1cee353ef7df63a972a84ac9"
 dependencies = [
  "anyhow",
  "bytes",
@@ -227,7 +227,7 @@ dependencies = [
 
 [[package]]
 name = "deno_notify"
-version = "1.4.1"
+version = "1.4.2"
 dependencies = [
  "deno_core",
  "futures",
@@ -237,9 +237,9 @@ dependencies = [
 
 [[package]]
 name = "deno_ops"
-version = "0.45.0"
+version = "0.46.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "998d3f2f229edbcd6823dc930b41fcd7be71f1b1c3f2510d0a413ff29fae64e8"
+checksum = "14347263e2433b60c689f9aaf545cc93f1b4be57d4735c3c498e165545550a14"
 dependencies = [
  "once_cell",
  "pmutil",
@@ -1037,9 +1037,9 @@ dependencies = [
 
 [[package]]
 name = "serde_v8"
-version = "0.78.0"
+version = "0.79.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "beb349bbca4a51daad1c26d987e530543e3dbbe21f4556bb7d200e86164b4b90"
+checksum = "66e41ffaede17c5ce641cd520a21207f12078f8bc86580aeb416851febe9863b"
 dependencies = [
  "bytes",
  "derive_more",
