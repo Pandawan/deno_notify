@@ -227,7 +227,7 @@ dependencies = [
 
 [[package]]
 name = "deno_notify"
-version = "1.4.2"
+version = "1.4.3"
 dependencies = [
  "deno_core",
  "futures",
@@ -606,9 +606,9 @@ dependencies = [
 
 [[package]]
 name = "mac-notification-sys"
-version = "0.5.0"
+version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "297c13fc8ff9fa8b2d0e53850f80e0aa962628e865d447031ce58cdb062e5b29"
+checksum = "3e72d50edb17756489e79d52eb146927bec8eba9dd48faadf9ef08bca3791ad5"
 dependencies = [
  "cc",
  "dirs-next",

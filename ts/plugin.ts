@@ -1,6 +1,6 @@
 import { CacheSetting, dlopen } from "https://deno.land/x/plug@1.0.0/mod.ts";
 
-const VERSION = "1.4.2";
+const VERSION = "1.4.3";
 const CACHE_POLICY: CacheSetting =
   Deno.env.get("NOTIFY_PLUGIN_URL") === undefined ? "use" : "reloadAll";
 const NOTIFY_PLUGIN_URL = Deno.env.get("NOTIFY_PLUGIN_URL") ??
@@ -18,7 +18,9 @@ const library = await dlopen({
 });
 
 // TODO: Check out https://github.com/webview/webview_deno/blob/main/src/ffi.ts
-function readPointer(v: Deno.PointerValue): Uint8Array {
+function readPointer(v: Deno.PointerValue): Uint8Array | null {
+  if (v == null) return null;
+
   const ptr = new Deno.UnsafePointerView(v);
   const lengthBe = new Uint8Array(4);
   const view = new DataView(lengthBe.buffer);
@@ -42,8 +44,20 @@ function notify_send(json: string): NotifySendResult {
     encodedJson,
     encodedJson.length,
   );
+
+  // Get the contents at the resulting pointer
+  const bufResult = readPointer(ptrResult);
+  if (bufResult == null) {
+    return {
+      type: "error",
+      when: "parsing_result",
+      message:
+        "Native deno_notify library returned a null pointer. Something is wrong.",
+    };
+  }
+
   // TODO: Use Deno.UnsafePointerView#getCString
-  const decodedJson = new TextDecoder().decode(readPointer(ptrResult));
+  const decodedJson = new TextDecoder().decode(bufResult);
   const result = JSON.parse(decodedJson);
   return result as NotifySendResult;
 }

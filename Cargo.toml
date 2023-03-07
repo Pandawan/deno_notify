@@ -1,6 +1,6 @@
 [package]
 name = "deno_notify"
-version = "1.4.2"
+version = "1.4.3"
 authors = ["Pandawan <pandawanfr@gmail.com>"]
 edition = "2021"
 publish = false
